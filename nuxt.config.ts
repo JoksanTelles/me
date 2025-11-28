@@ -1,11 +1,39 @@
+/// <reference types="node" />
+import { fileURLToPath } from 'url'
+import path from 'path'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', 'shadcn-nuxt'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    'shadcn-nuxt',
+    '@storyblok/nuxt'
+  ],
   shadcn: {
     prefix: '',
-    componentDir: './components/ui'
+    componentDir: path.join(__dirname, './app/components/ui')
+  },
+  storyblok: {
+    accessToken: process.env.STORYBLOK_TOKEN,
+    bridge: true,
+    devtools: true,
+    componentsDir: path.join(__dirname, './app/components/storyblok')
+  },
+  components: {
+    dirs: [
+      {
+        path: path.join(__dirname, './app/components/storyblok'),
+        prefix: ''
+      },
+      {
+        path: path.join(__dirname, './app/components/ui'),
+        prefix: ''
+      }
+    ]
   },
   nitro: {
     preset: 'cloudflare-pages'
