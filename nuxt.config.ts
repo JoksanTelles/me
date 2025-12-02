@@ -11,8 +11,12 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/tailwindcss',
     'shadcn-nuxt',
-    '@storyblok/nuxt'
+    '@storyblok/nuxt',
+    '@nuxtjs/color-mode'
   ],
+  colorMode: {
+    classSuffix: ''
+  },
   shadcn: {
     prefix: '',
     componentDir: path.join(__dirname, './app/components/ui')
