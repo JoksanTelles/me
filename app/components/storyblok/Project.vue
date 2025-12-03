@@ -1,7 +1,23 @@
 <script setup lang="ts">
     import { Calendar } from 'lucide-vue-next'
 
-    defineProps({ blok: Object })
+    //defineProps({ blok: Object })
+
+    interface Blok {
+        name: string;
+        date: string;
+        tags: string[];
+        summary: string;
+        content: any;
+        cover?: {
+            filename: string;
+            alt: string;
+        };
+    }
+
+    defineProps<{
+        blok: Blok
+    }>()
 
     // Función simple para formatear fecha
     const formatDate = (dateStr: string) => {
@@ -15,7 +31,7 @@
 </script>
 
 <template>
-    <div v-editable="blok" class="container max-w-4xl py-10 space-y-8">
+    <div v-if="blok" v-editable="blok" class="container max-w-4xl py-10 space-y-8">
         <div class="space-y-4">
             <div class="flex items-center gap-2 text-muted-foreground">
                 <Calendar class="w-4 h-4" />
@@ -23,7 +39,7 @@
             </div>
         
             <h1 class="text-4xl font-bold tracking-tight lg:text-5xl">
-                {{ blok.title || 'Sin Título' }} 
+                {{ blok.name || 'Sin Títulooo' }} 
             </h1>
 
             <div v-if="blok.tags" class="flex flex-wrap gap-2">
@@ -36,7 +52,7 @@
         <div v-if="blok.cover?.filename" class="relative aspect-video w-full overflow-hidden rounded-lg border bg-muted">
             <img 
                 :src="blok.cover.filename" 
-                :alt="blok.cover.alt || blok.title"
+                :alt="blok.cover.alt || blok.name"
                 class="object-cover w-full h-full"
             />
         </div>

@@ -1,9 +1,13 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const { story, pending, error } = await useAsyncStoryblok(`logs/${route.params.slug}`, {
-  api: { version: 'published'},
-  bridge: {}
+const slug = `logs/${route.params.slug}`
+const { data: story, pending, error } = await useAsyncData(slug, async () => {
+  const storyblokApi = useStoryblokApi()
+  const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {
+    version: 'published',
+  })
+  return data.story
 })
 </script>
 

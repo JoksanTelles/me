@@ -41,7 +41,7 @@ const fetchChapters = async () => {
 }
 
 // Ejecutamos el fetch en el servidor y cliente
-await fetchChapters()
+await useAsyncData(`chapters-${props.blok.title}-${version.value}`, fetchChapters)
 
 // Helpers visuales
 const statusColors = {
@@ -69,7 +69,7 @@ const statusColors = {
             </div>
 
             <Button v-if="chapters.length > 0" class="w-full" size="lg" as-child>
-            <NuxtLink :to="`/${chapters[0].full_slug}`">
+            <NuxtLink :to="`/s/${route.params.slug}/${chapters[0].slug}`">
                 <BookOpen class="w-4 h-4 mr-2" />
                 Leer Primer Capítulo
             </NuxtLink>
@@ -113,7 +113,7 @@ const statusColors = {
                 <NuxtLink 
                 v-for="chapter in chapters" 
                 :key="chapter.uuid"
-                :to="`/${chapter.full_slug}`"
+                :to="`/s/${route.params.slug}/${chapter.slug}`"
                 class="group flex items-center justify-between p-4 rounded-lg border bg-card hover:border-primary/50 hover:bg-muted/50 transition-all"
                 >
                 <div class="flex items-center gap-4">

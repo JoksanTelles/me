@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const storyblokApi = useStoryblokApi()
+const storyblok = useStoryblokApi()
 
 console.log("Iniciando la carga de historias desde Storyblok...");
 
 const { data: stories, pending, error } = await useAsyncData('stories', async () => {
   try {
-    const { data } = await storyblokApi.get('cdn/stories', {
+    const { data } = await storyblok.get('cdn/stories', {
       // IMPORTANTE: Si tus historias no aparecen, prueba a cambiar 'draft' por 'published'
       // O si estás seguro de que están en draft, verifica el content_type en Storyblok.
       version: 'draft', 

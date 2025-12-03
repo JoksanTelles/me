@@ -26,7 +26,7 @@ const stories = data.stories
             <NuxtLink 
                 v-for="story in stories" 
                 :key="story.uuid"
-                :to="`/${story.full_slug}`"
+                :to="'/s/' + story.slug"
                 class="group space-y-3"
             >
                 <div class="aspect-[2/3] overflow-hidden rounded-md border bg-muted shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1 relative">
@@ -49,7 +49,7 @@ const stories = data.stories
 
                 <div class="space-y-1">
                 <h3 class="font-bold leading-tight group-hover:text-primary transition-colors">
-                    {{ story.content.title }}
+                    {{ story.content.name }}
                 </h3>
                 <div class="flex flex-wrap gap-1">
                     <span v-for="g in story.content.genres?.slice(0, 2)" :key="g" class="text-xs text-muted-foreground">

@@ -10,6 +10,7 @@ import Log from '../components/storyblok/Log.vue'
 import Archive from '../components/storyblok/Archive.vue'
 import Post from '../components/storyblok/Post.vue'
 import Story from '../components/storyblok/Story.vue'
+import Chapter from '../components/storyblok/Chapter.vue'
 
 export default defineNuxtPlugin((nuxtApp) => {
   // Register Storyblok components globally with lowercase names
@@ -30,4 +31,5 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('posts', Post) // Also register as plural
   nuxtApp.vueApp.component('story', Story)
   nuxtApp.vueApp.component('stories', Story) // Also register as plural
+  nuxtApp.vueApp.component('chapter', Chapter)
 })

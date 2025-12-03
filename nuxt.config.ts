@@ -41,5 +41,14 @@ export default defineNuxtConfig({
   },
   nitro: {
     preset: 'cloudflare-pages'
+  },
+  runtimeConfig: {
+    // Claves privadas (solo disponibles en el servidor/worker)
+    kitApiKey: process.env.NUXT_KIT_API_KEY,
+    kitFormId: process.env.NUXT_KIT_FORM_ID,
+    // Claves públicas (disponibles en el cliente)
+    public: {
+      // ...
+    }
   }
 })

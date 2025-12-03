@@ -1,27 +1,31 @@
 <script setup lang="ts">
-import { Calendar, ChevronRight, Hash } from 'lucide-vue-next'
-import { Badge } from '~/components/ui/badge'
+    import { Calendar, ChevronRight, Hash } from 'lucide-vue-next'
+    import { Badge } from '~/components/ui/badge'
 
-interface Blok {
-  title: string;
-  date: string;
-  tags: string[];
-  intro: string;
-  content: any;
-  cover?: {
-    filename: string;
-    alt: string;
-  };
-}
+    interface Blok {
+    title: string;
+    date: string;
+    tags: string[];
+    intro: string;
+    content: any;
+    cover?: {
+        filename: string;
+        alt: string;
+    };
+    }
 
-defineProps<{
-  blok: Blok
-}>()
+    defineProps<{
+    blok: Blok
+    }>()
 
-const formatDate = (dateStr: string) => {
-  if (!dateStr) return ''
-  return new Date(dateStr).toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' })
-}
+    const formatDate = (dateStr: string) => {
+        if (!dateStr) return ''
+        return new Date(dateStr).toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        })
+    }
 </script>
 
 <template>
@@ -40,16 +44,16 @@ const formatDate = (dateStr: string) => {
             </div>
             
             <div v-if="blok.tags" class="flex gap-2">
-            <NuxtLink 
-                v-for="tag in blok.tags" 
-                :key="tag" 
-                :to="`/archives/section/${tag}`"
-            >
-                <Badge variant="secondary" class="text-xs hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer flex items-center gap-1">
-                <Hash class="w-3 h-3" />
-                {{ tag }}
-                </Badge>
-            </NuxtLink>
+                <NuxtLink 
+                    v-for="tag in blok.tags" 
+                    :key="tag" 
+                    :to="`/archives/section/${tag}`"
+                >
+                    <Badge variant="secondary" class="text-xs hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer flex items-center gap-1">
+                        <Hash class="w-3 h-3" />
+                        {{ tag }}
+                    </Badge>
+                </NuxtLink>
             </div>
         </div>
 
@@ -71,7 +75,7 @@ const formatDate = (dateStr: string) => {
         </div>
 
         <div class="prose prose-slate dark:prose-invert max-w-none">
-        <StoryblokRichText :doc="blok.content" />
+            <StoryblokRichText :doc="blok.content" />
         </div>
     </div>
 </template>
