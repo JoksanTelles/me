@@ -1,4 +1,11 @@
 <script setup lang="ts">
+interface StoryblokStory {
+  name: string
+  uuid: string
+  slug: string
+  content: Record<string, any>
+}
+
 const storyblokApi = useStoryblokApi()
 const route = useRoute()
 
@@ -10,7 +17,16 @@ const { data } = await storyblokApi.get('cdn/stories', {
   content_type: 'stories', // Filtrar solo las portadas
 })
 
-const stories = data.stories
+const processedStories = computed(() => {
+    if (!data.stories) return []
+    return data.stories.map((story: StoryblokStory) => ({
+        ...story,
+        content: {
+            ...story.content,
+            name: story.name
+        }
+    }))
+})
 </script>
 
 <template>
@@ -24,7 +40,7 @@ const stories = data.stories
 
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
             <NuxtLink 
-                v-for="story in stories" 
+                v-for="story in processedStories" 
                 :key="story.uuid"
                 :to="'/s/' + story.slug"
                 class="group space-y-3"

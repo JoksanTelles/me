@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { Folder, ArrowLeft, Hash } from 'lucide-vue-next'
-import { useRoute, useStoryblokApi, computed } from '#imports'
+import { useRoute, useStoryblokApi } from '#imports'
+import { computed } from 'vue'
 
 const route = useRoute()
 const currentTag = route.params.tag as string
 const storyblokApi = useStoryblokApi()
 
-// 1. Obtenemos TODO para poder armar el sidebar igual (necesitamos saber qué otros tags existen)
 const { data } = await storyblokApi.get('cdn/stories', {
-version: 'draft',
-starts_with: 'archives/',
-is_startpage: false,
-sort_by: 'content.date:desc'
+	version: 'draft',
+	starts_with: 'archives/',
+	is_startpage: false,
+	sort_by: 'content.date:desc'
 })
 
 const allArchives = data.stories
@@ -96,7 +96,7 @@ return allArchives.filter((story: any) => {
 				<div class="flex justify-between items-start gap-4">
 					<div class="space-y-2">
 					<CardTitle class="text-lg group-hover:text-primary transition-colors">
-						{{ archive.content.title }}
+						{{ archive.name }}
 					</CardTitle>
 					<CardDescription class="line-clamp-2">
 						{{ archive.content.intro }}

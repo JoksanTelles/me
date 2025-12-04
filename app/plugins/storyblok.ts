@@ -22,6 +22,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('projects', Project) // Also register as plural
   nuxtApp.vueApp.component('log', Log)
   nuxtApp.vueApp.component('logs', Log) // Also register as plural
+  nuxtApp.vueApp.component('devlogs', Log) // Also register as plural
   nuxtApp.vueApp.component('archive', Archive)
   nuxtApp.vueApp.component('archives', Archive) // Also register as plural
   nuxtApp.vueApp.component('story', Story)

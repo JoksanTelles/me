@@ -3,19 +3,19 @@
     import { Badge } from '~/components/ui/badge'
 
     interface Blok {
-    title: string;
-    date: string;
-    tags: string[];
-    intro: string;
-    content: any;
-    cover?: {
-        filename: string;
-        alt: string;
-    };
+        name: string;
+        date: string;
+        tags: string[];
+        intro: string;
+        content: any;
+        cover?: {
+            filename: string;
+            alt: string;
+        };
     }
 
     defineProps<{
-    blok: Blok
+        blok: Blok
     }>()
 
     const formatDate = (dateStr: string) => {
@@ -33,7 +33,7 @@
         <nav class="flex items-center text-sm text-muted-foreground mb-6 space-x-1">
             <NuxtLink to="/archives" class="hover:text-primary transition-colors">Archivos</NuxtLink>
             <ChevronRight class="w-4 h-4" />
-            <span class="font-medium text-foreground truncate">{{ blok.title }}</span>
+            <span class="font-medium text-foreground truncate">{{ blok.name }}</span>
         </nav>
 
         <header class="mb-8 border-b pb-8">
@@ -58,7 +58,7 @@
         </div>
 
         <h1 class="text-3xl font-bold tracking-tight mb-4">
-            {{ blok.title }}
+            {{ blok.name || 'Archivo Sin Título' }}
         </h1>
 
         <p v-if="blok.intro" class="text-lg text-muted-foreground leading-relaxed">

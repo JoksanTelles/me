@@ -1,7 +1,20 @@
 <script setup lang="ts">
     import { Clock, Calendar } from 'lucide-vue-next'
 
-    defineProps({ blok: Object })
+    interface Blok {
+      date: string;
+      title: string;
+      intro?: string;
+      cover?: {
+        filename: string;
+        alt: string;
+      };
+      content: any;
+    }
+
+    defineProps<{
+        blok: Blok
+    }>()
 
     const formatDate = (dateStr: string) => {
         if (!dateStr) return ''
@@ -14,7 +27,7 @@
 </script>
 
 <template>
-    <div v-editable="blok" class="container max-w-3xl py-12">
+    <div v-if="blok" v-editable="blok" class="container max-w-3xl py-12">
         <header class="mb-10 text-center space-y-4">
             <div class="flex items-center justify-center gap-2 text-sm text-muted-foreground">
                 <Calendar class="w-4 h-4" />
@@ -22,7 +35,7 @@
             </div>
 
             <h1 class="text-4xl font-extrabold tracking-tight lg:text-5xl">
-                {{ blok.name || 'DevLog Sin Título' }}
+                {{ blok.title || 'DevLog Sin Título' }}
             </h1>
 
             <p v-if="blok.intro" class="text-xl text-muted-foreground max-w-2xl mx-auto">

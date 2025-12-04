@@ -1,18 +1,36 @@
 <script setup lang="ts">
 import { Folder, Hash, ArrowRight } from 'lucide-vue-next'
 
+interface StoryblokStory {
+  name: string
+  uuid: string
+  full_slug: string
+  content: Record<string, any>
+}
+
 const storyblokApi = useStoryblokApi()
 
 // 1. Obtener TODOS los archivos (flat)
 // Pedimos 'starts_with: archives/' para obtener todo lo que esté en esa carpeta
 const { data } = await storyblokApi.get('cdn/stories', {
-version: 'draft',
-starts_with: 'archives/',
-is_startpage: false, 
-sort_by: 'content.date:desc'
+  version: 'draft',
+  starts_with: 'archives/',
+  is_startpage: false, 
+  sort_by: 'content.date:desc'
 })
 
 const allArchives = data.stories
+
+const processedArchives = computed(() => {
+    if (!allArchives) return []
+    return allArchives.map((story: StoryblokStory) => ({
+        ...story,
+        content: {
+            ...story.content,
+            name: story.name
+        }
+    }))
+})
 
 // 2. Extraer Tags Únicos (Secciones) dinámicamente
 // Recorremos todos los artículos y colectamos sus tags
@@ -59,7 +77,7 @@ return Array.from(tagsSet).sort()
                     class="flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium bg-muted text-primary"
                 >
                     <span>Todo</span>
-                    <span class="text-xs text-muted-foreground">{{ allArchives.length }}</span>
+                    <span class="text-xs text-muted-foreground">{{ processedArchives.length }}</span>
                 </NuxtLink>
 
                 <NuxtLink 
@@ -77,7 +95,7 @@ return Array.from(tagsSet).sort()
 
         <div class="md:col-span-3 grid gap-4 content-start">
             <NuxtLink 
-            v-for="archive in allArchives" 
+            v-for="archive in processedArchives" 
             :key="archive.uuid"
             :to="`/${archive.full_slug}`"
             class="block group"
@@ -87,7 +105,7 @@ return Array.from(tagsSet).sort()
                 <div class="flex justify-between items-start gap-4">
                     <div class="space-y-2">
                     <CardTitle class="text-lg group-hover:text-primary transition-colors">
-                        {{ archive.content.title }}
+                        {{ archive.content.name }}
                     </CardTitle>
                     <CardDescription class="line-clamp-2">
                         {{ archive.content.intro }}
