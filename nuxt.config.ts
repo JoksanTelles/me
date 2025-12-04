@@ -15,11 +15,13 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode'
   ],
   colorMode: {
-    classSuffix: ''
+    classSuffix: '',
+    preference: 'system',
+    fallback: 'light'
   },
   shadcn: {
     prefix: '',
-    componentDir: path.join(__dirname, './app/components/ui')
+    componentDir: path.join(__dirname, './app/components/ui'),
   },
   storyblok: {
     accessToken: process.env.STORYBLOK_TOKEN,
