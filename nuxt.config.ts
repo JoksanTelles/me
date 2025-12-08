@@ -45,11 +45,7 @@ export default defineNuxtConfig({
     ]
   },
   nitro: {
-    preset: 'cloudflare-pages',
-    output: {
-      dir: '.output',
-      publicDir: '.output/public'
-    }
+    preset: 'cloudflare-pages'
   },
   runtimeConfig: {
     // Claves privadas (solo disponibles en el servidor/worker)
