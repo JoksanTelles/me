@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    
     const links = [
         { name: 'Historias', path: '/stories' },
         { name: 'DevLog', path: '/devlog' },
