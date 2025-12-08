@@ -6,7 +6,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
@@ -46,7 +45,11 @@ export default defineNuxtConfig({
     ]
   },
   nitro: {
-    preset: 'cloudflare-pages'
+    preset: 'cloudflare-pages',
+    output: {
+      dir: '.output',
+      publicDir: '.output/public'
+    }
   },
   runtimeConfig: {
     // Claves privadas (solo disponibles en el servidor/worker)
