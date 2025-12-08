@@ -1,6 +1,5 @@
 <script setup lang="ts">
     import MobileNav from './MobileNav.vue'
-    import ColorModeToggle from './ColorModeToggle.vue'
 
     const links = [
         { name: 'Historias', path: '/stories' },
