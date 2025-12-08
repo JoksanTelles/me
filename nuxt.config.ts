@@ -38,6 +38,10 @@ export default defineNuxtConfig({
       {
         path: path.join(__dirname, './app/components/ui'),
         prefix: ''
+      },
+      {
+        path: path.join(__dirname, './app/components/app'),
+        prefix: ''
       }
     ]
   },
