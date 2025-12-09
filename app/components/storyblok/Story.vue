@@ -21,14 +21,10 @@ const storyblokApi = useStoryblokApi()
 
 const version = computed(() => route.query._storyblok ? 'draft' : 'published')
 
-// Estado para los capítulos
-const chapters = ref<any[]>([])
-
-// Fetch de capítulos a través de las referencias en el blok
 const fetchChapters = async () => {
-  if (!props.blok.chapters || props.blok.chapters.length === 0) {
-    chapters.value = []
-    return
+  // Guard against undefined props during SSR/initial render
+  if (!props.blok || !props.blok.chapters || props.blok.chapters.length === 0) {
+    return [] // Return an empty array if there's no data to fetch
   }
 
   const { data } = await storyblokApi.get('cdn/stories', {
@@ -37,13 +33,18 @@ const fetchChapters = async () => {
     sort_by: 'content.chapter_number:asc'
   })
 
-  chapters.value = data.stories
+  return data.stories
 }
 
-// Ejecutamos el fetch en el servidor y cliente
-await useAsyncData(`chapters-${props.blok.title}-${version.value}`, fetchChapters)
+// Make the key safe against props.blok being undefined initially.
+// Let useAsyncData manage the chapters state.
+const { data: chapters } = await useAsyncData(
+    `chapters-${props.blok?.title}-${version.value}`, 
+    fetchChapters, 
+    { default: () => [] }
+)
 
-// Helpers visuales
+// Visual helpers for status colors
 const statusColors = {
     Draft: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
     Ongoing: 'bg-green-500/10 text-green-500 border-green-500/20',
@@ -68,7 +69,7 @@ const statusColors = {
             </div>
             </div>
 
-            <Button v-if="chapters.length > 0" class="w-full" size="lg" as-child>
+            <Button v-if="chapters && chapters.length > 0" class="w-full" size="lg" as-child>
             <NuxtLink :to="`/s/${route.params.slug}/${chapters[0].slug}`">
                 <BookOpen class="w-4 h-4 mr-2" />
                 Leer Primer Capítulo
@@ -103,33 +104,32 @@ const statusColors = {
 
             <Separator />
 
-            <div class="space-y-6">
-            <h2 class="text-2xl font-bold flex items-center gap-2">
-                <List class="w-6 h-6" />
-                Índice de Capítulos
-            </h2>
-
-            <div v-if="chapters.length > 0" class="grid gap-2">
-                <NuxtLink 
-                v-for="chapter in chapters" 
-                :key="chapter.uuid"
-                :to="`/s/${route.params.slug}/${chapter.slug}`"
-                class="group flex items-center justify-between p-4 rounded-lg border bg-card hover:border-primary/50 hover:bg-muted/50 transition-all"
-                >
-                <div class="flex items-center gap-4">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                    {{ chapter.content.chapter_number }}
-                    </div>
-                    <span class="font-medium group-hover:text-primary transition-colors">
-                    {{ chapter.content.title }}
-                    </span>
-                </div>
-                <span class="text-xs text-muted-foreground hidden sm:inline-block">
-                    Leer &rarr;
-                </span>
-                </NuxtLink>
-            </div>
-            <div v-else class="text-center py-10 text-muted-foreground bg-muted/30 rounded-lg">
+                        <div class="space-y-6">
+                        <h2 class="text-2xl font-bold flex items-center gap-2">
+                            <List class="w-6 h-6" />
+                            Índice de Capítulos
+                        </h2>
+            
+                        <div v-if="chapters && chapters.length > 0" class="grid gap-2">
+                            <NuxtLink 
+                            v-for="chapter in chapters" 
+                            :key="chapter.uuid"
+                            :to="`/s/${route.params.slug}/${chapter.slug}`"
+                            class="group flex items-center justify-between p-4 rounded-lg border bg-card hover:border-primary/50 hover:bg-muted/50 transition-all"
+                            >
+                            <div class="flex items-center gap-4">
+                                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-medium group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                                {{ chapter.content.chapter_number }}
+                                </div>
+                                <span class="font-medium group-hover:text-primary transition-colors">
+                                {{ chapter.name || 'Sin Título' }}
+                                </span>
+                            </div>
+                            <span class="text-xs text-muted-foreground hidden sm:inline-block">
+                                Leer &rarr;
+                            </span>
+                            </NuxtLink>
+                        </div>            <div v-else class="text-center py-10 text-muted-foreground bg-muted/30 rounded-lg">
                 No hay capítulos publicados aún.
             </div>
             </div>

@@ -4,8 +4,8 @@
     // Definimos los enlaces aquí para reusarlos
     const links = [
         { name: 'Inicio', path: '/', icon: Laptop },
-        { name: 'Historias', path: '/s', icon: BookOpen },
-        { name: 'DevLogs', path: '/devlog', icon: Laptop }, // Icono temporal
+        { name: 'Historias', path: '/stories', icon: BookOpen },
+        { name: 'DevLogs', path: '/devlog', icon: Laptop },
         { name: 'Portafolio', path: '/portfolio', icon: Briefcase },
         { name: 'Archivos', path: '/archives', icon: Archive },
     ]
