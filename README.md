@@ -2,6 +2,10 @@
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
+## Documentation
+
+This project has detailed documentation in the `/docs` directory. It is highly recommended to read it before starting to work on the project.
+
 ## Setup
 
 Make sure to install dependencies:
@@ -36,6 +40,27 @@ yarn dev
 
 # bun
 bun run dev
+```
+
+## Linting and Formatting
+
+This project uses ESLint for linting and Prettier for formatting.
+
+```bash
+# Lint
+npm run lint
+
+# Format
+npm run format
+```
+
+## Testing
+
+This project uses Vitest for testing.
+
+```bash
+# Test
+npm run test
 ```
 
 ## Production

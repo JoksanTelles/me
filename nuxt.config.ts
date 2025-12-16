@@ -1,4 +1,5 @@
-/// <reference types="node" />
+/// <reference types="vitest" />
+import { defineNuxtConfig } from 'nuxt/config'
 import { fileURLToPath } from 'url'
 import path from 'path'
 
@@ -6,6 +7,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  test: {
+    environment: 'happy-dom'
+  },
   devtools: { enabled: true },
   modules: [
     '@nuxtjs/tailwindcss',
@@ -54,6 +58,13 @@ export default defineNuxtConfig({
     // Claves públicas (disponibles en el cliente)
     public: {
       // ...
+    }
+  },
+  vite: {
+    server: {
+      hmr: {
+        port: 24679
+      }
     }
   }
 })

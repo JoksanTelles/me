@@ -7,7 +7,7 @@
 
 ## 1\. Introduction
 
-Este documento detalla la arquitectura técnica para **Joksan.dev**, una plataforma web personal progresiva (PWA) construida sobre un stack moderno y gratuito ("The Infinite Free-Tier Stack"). La arquitectura prioriza el rendimiento en el borde (Edge), la mantenibilidad del código y una separación estricta entre presentación (Frontend) y contenido (Headless CMS).
+Este documento detalla la arquitectura técnica para **Joksan.dev**, una plataforma web personal construida sobre un stack moderno y gratuito ("The Infinite Free-Tier Stack"). La arquitectura prioriza el rendimiento en el borde (Edge), la mantenibilidad del código y una separación estricta entre presentación (Frontend) y contenido (Headless CMS).
 
 ## 2\. High Level Architecture
 
@@ -17,7 +17,6 @@ Este documento detalla la arquitectura técnica para **Joksan.dev**, una platafo
 La aplicación no es una SPA pura ni un sitio estático tradicional. Utiliza **Nuxt 3** con renderizado híbrido:
 
   * **Static (SSG/Prerender):** Para páginas que cambian poco (Inicio, Portafolio, Archivero). Se generan una vez en el build.
-  * **ISR (Incremental Static Regeneration):** Para contenido dinámico (Historias, Capítulos, DevLogs). Se generan bajo demanda y se cachean en el borde de Cloudflare (TTL configurable).
 
 ### 2.2 System Context Diagram (Mermaid)
 
@@ -32,17 +31,6 @@ graph TD
     
     subgraph "Content & Data Layer"
         Worker -->|Fetch JSON| SB[Storyblok API]
-        Worker -->|Subscribe| Kit[Kit / ConvertKit API]
-    end
-    
-    subgraph "Assets"
-        SB -->|Manage| Cloudinary[Cloudinary DAM]
-        User -->|Load Images| Cloudinary
-    end
-    
-    subgraph "Services"
-        User -->|Push Notif| OS[OneSignal]
-        User -->|Analytics| HA[Cloudflare Analytics]
     end
 ```
 
@@ -55,10 +43,7 @@ graph TD
 | **Styling** | **Tailwind CSS** | 3.x | Styling | Utility-first, bajo peso CSS. |
 | **UI Library** | **Shadcn-vue** | Latest | Components | Componentes accesibles, personalizables y dueños del código. |
 | **CMS** | **Storyblok** | V2 API | Content Management | Editor visual, esquema flexible, API rápida. |
-| **Assets** | **Cloudinary** | - | Image Optimization | Formatos auto (WebP/AVIF), redimensionamiento al vuelo. |
 | **Hosting** | **Cloudflare Pages** | - | Deployment | Global CDN, Workers gratuitos, Builds rápidos. |
-| **PWA** | **@vite-pwa/nuxt** | - | Offline/Install | Capacidades progresivas. |
-| **Marketing** | **Kit + OneSignal** | - | Growth | Newsletter y Push Notifications (Plan Free generoso). |
 
 ## 4\. Data Models (Storyblok Schema)
 
@@ -139,25 +124,9 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true },           // Estático puro
     '/portfolio/**': { prerender: true }, // Estático puro
-    '/devlog/**': { isr: 3600 },        // Regenerar máx cada hora si hay cambios
-    '/s/**': { isr: 60 },               // Regenerar máx cada minuto (para typos rápidos)
-    '/server/api/**': { cors: true }    // API dinámica
   }
 })
 ```
-
-### 6.2 Image Optimization
-
-Uso de `<NuxtImg>` con provider `cloudinary`.
-
-  * Formato automático: `f_auto` (entrega AVIF/WebP según navegador).
-  * Lazy Loading nativo.
-  * Placeholder: Blur hash para carga percibida instantánea.
-
-### 6.3 Internationalization (i18n)
-
-  * Estrategia: Prefijo de ruta excepto default (`/` = ES, `/en` = EN).
-  * Storyblok: Se utiliza la funcionalidad "Field Level Translation" de Storyblok. Nuxt solicita el contenido con el parámetro `language` correspondiente.
 
 ## 7\. Integrations
 
@@ -166,12 +135,6 @@ Uso de `<NuxtImg>` con provider `cloudinary`.
   * **Frontend:** Formulario Shadcn con validación Zod.
   * **Backend (Server Route):** Recibe el email → Valida → Envía POST a la API de Kit usando `KIT_API_KEY` (variable de entorno en Cloudflare).
   * **Seguridad:** La API Key nunca se expone al cliente.
-
-### 7.2 Push Notifications (OneSignal)
-
-  * Plugin cliente (`plugins/onesignal.client.ts`).
-  * Inicialización diferida (no bloquear el hilo principal).
-  * Prompt personalizado (no el nativo del navegador) para mejor UX.
 
 ## 8\. Development & Deployment
 
@@ -190,10 +153,4 @@ npm run dev
 1.  **Push to Main (GitHub):** Dispara el build en Cloudflare.
 2.  **Build Command:** `npm run build` (Genera salida compatible con Workers).
 3.  **Output Directory:** `.output/public` (Nuxt Nitro preset).
-4.  **Environment Variables:** Configurar en el dashboard de Cloudflare (`STORYBLOK_TOKEN`, `KIT_API_KEY`).
-
-## 9\. Security & Performance
-
-  * **CSP (Content Security Policy):** Configurar headers para permitir scripts solo de dominios confiables (OneSignal, Carbon Ads).
-  * **Fonts:** Usar `@nuxt/fonts` para descargar y hostear fuentes de Google automáticamente (evita request externos y CLS).
-  * **Lighthouse Budget:** Bloquear el deploy si Performance \< 90 o Accessibility \< 90 (opcional en CI).
+4.  **Environment Variables:** Configurar en el dashboard de Cloudflare (`STORYBLOK_TOKEN`).
