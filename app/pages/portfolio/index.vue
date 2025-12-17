@@ -1,4 +1,8 @@
 <script setup lang="ts">
+    useHead({
+      title: 'Portafolio | joksan.dev'
+    })
+
     const storyblokApi = useStoryblokApi()
 
     // Pedimos todas las historias que empiecen con 'projects/'

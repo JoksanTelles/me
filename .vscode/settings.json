@@ -2,5 +2,9 @@
   "css.lint.unknownAtRules": "ignore",
   "files.associations": {
     "tailwind.css": "tailwindcss"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

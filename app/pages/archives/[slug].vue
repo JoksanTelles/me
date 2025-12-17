@@ -16,6 +16,12 @@ const storyBlok = computed(() => {
     if (!story.value) return null
     return { ...story.value.content, name: story.value.name }
 })
+
+useSeoMeta({
+  title: () => story.value?.name,
+  description: () => story.value?.content?.intro,
+  ogImage: () => story.value?.content?.cover?.filename,
+})
 </script>
 
 <template>

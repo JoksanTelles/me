@@ -10,6 +10,11 @@ const { data } = await storyblokApi.get('cdn/stories', {
 })
 
 const logs = data.stories
+
+useSeoMeta({
+  title: 'DevLogs',
+  description: 'Bitácora de desarrollo, errores cometidos y lecciones aprendidas.',
+})
 </script>
 
 <template>

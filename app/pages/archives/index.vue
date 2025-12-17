@@ -52,6 +52,11 @@ allArchives.forEach((story: any) => {
 
 return Array.from(tagsSet).sort()
 })
+
+useSeoMeta({
+  title: 'Archivero',
+  description: 'Digital Garden. Colección completa de aprendizajes y notas.',
+})
 </script>
 
 <template>

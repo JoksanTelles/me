@@ -12,6 +12,10 @@ const { data: story, pending, error } = await useAsyncData(slug, async () => {
 	return data?.story
 })
 
+useHead(() => ({
+  title: story.value ? `${story.value.name} | joksan.dev` : 'joksan.dev'
+}))
+
 const storyBlok = computed(() => {
     if (!story.value) return null
     return { ...story.value.content, name: story.value.name }

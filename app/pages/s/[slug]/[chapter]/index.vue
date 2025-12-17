@@ -7,6 +7,7 @@ const slug = `chapters/${route.params.chapter}`
 const { data: story } = await useAsyncData(slug, async () => {
   const storyblokApi = useStoryblokApi()
   try {
+    // Removed resolve_relations as we no longer need the parent story's title
     const { data } = await storyblokApi.get(`cdn/stories/${slug}`, {
       version: 'draft',
     })
@@ -18,18 +19,23 @@ const { data: story } = await useAsyncData(slug, async () => {
   }
 })
 
+// Set the head title to "{{chapter.title}} | joksan.dev"
+useHead(() => ({
+  title: story.value ? `${story.value.name} | joksan.dev` : 'joksan.dev',
+}))
+
 const blok = computed(() => {
-    if (!story.value?.content) {
-        return null
-    }
-    const modifiedContent = { 
-        ...story.value.content, 
-        title: story.value.name 
-    }
-    if (modifiedContent.component === 'chapters') {
-        modifiedContent.component = 'chapter'
-    }
-    return modifiedContent
+  if (!story.value?.content) {
+    return null
+  }
+  const modifiedContent = {
+    ...story.value.content,
+    title: story.value.name,
+  }
+  if (modifiedContent.component === 'chapters') {
+    modifiedContent.component = 'chapter'
+  }
+  return modifiedContent
 })
 
 console.log('Fetched story:', story)

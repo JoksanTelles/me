@@ -1,4 +1,11 @@
 <script setup lang="ts">
+useHead({
+  title: 'Mis historias | Joksan.dev',
+  meta: [
+    { name: 'description', content: 'Explora una colección de mis historias de ciencia ficción y fantasía.' }
+  ]
+})
+
 interface StoryblokStory {
   name: string
   uuid: string

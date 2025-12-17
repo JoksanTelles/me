@@ -35,6 +35,11 @@ return allArchives.filter((story: any) => {
 	return tagsArray.includes(currentTag)
 })
 })
+
+useSeoMeta({
+  title: `Archivero | ${currentTag}`,
+  description: `Explora todos los posts, notas y recursos sobre ${currentTag}.`,
+})
 </script>
 
 <template>

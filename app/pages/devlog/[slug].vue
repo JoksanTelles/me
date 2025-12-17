@@ -22,6 +22,12 @@ const pageBlok = computed(() => {
     title: story.value.content.title || story.value.name,
   }
 })
+
+useSeoMeta({
+  title: () => story.value?.content?.title || story.value?.name,
+  description: () => story.value?.content?.intro,
+  ogImage: () => story.value?.content?.cover?.filename,
+})
 </script>
 
 <template>

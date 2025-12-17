@@ -12,6 +12,10 @@ const { data: story } = await useAsyncData(slug, async () => {
   })
   return data.story
 })
+
+useHead({
+  title: story.value ? `${story.value.name} | joksan.dev` : 'joksan.dev',
+})
 </script>
 
 <template>
