@@ -1,0 +1,230 @@
+---
+import "./CtaForm.css";
+---
+
+<div class="cta-form-container" id="cta-form-root">
+    <!-- Progress Bar -->
+    <div id="progress-container" class="cta-progress-track">
+        <div id="progress-bar" class="cta-progress-bar" style="width: 33.33%">
+        </div>
+    </div>
+
+    <!-- Step 1: Datos Generales -->
+    <div id="step-1" class="step-container space-y-8 animate-in">
+        <h3 class="cta-title">PÁGINA 1: Datos generales</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+                <label class="cta-label">Nombre</label>
+                <input
+                    name="name"
+                    type="text"
+                    class="cta-input"
+                    placeholder="Tu nombre"
+                />
+            </div>
+            <div class="space-y-2">
+                <label class="cta-label">Email</label>
+                <input
+                    name="email"
+                    type="email"
+                    class="cta-input"
+                    placeholder="tu@email.com"
+                />
+            </div>
+            <div class="space-y-2">
+                <label class="cta-label">Empresa</label>
+                <input
+                    name="company"
+                    type="text"
+                    class="cta-input"
+                    placeholder="Nombre de empresa"
+                />
+            </div>
+            <div class="space-y-2">
+                <label class="cta-label">Cargo / Rol</label>
+                <input
+                    name="role"
+                    type="text"
+                    class="cta-input"
+                    placeholder="Ej. CTO, Fundador"
+                />
+            </div>
+        </div>
+        <div class="space-y-2">
+            <label class="cta-label">Háblame sobre tu proyecto…</label>
+            <textarea
+                name="description"
+                rows="4"
+                class="cta-input"
+                placeholder="Breve descripción..."></textarea>
+        </div>
+        <button type="button" class="next-btn cta-button-primary group">
+            Siguiente paso
+            <span class="material-icons-round ml-2 text-4xl">arrow_forward</span
+            >
+        </button>
+    </div>
+
+    <!-- Step 2: Sobre el proyecto -->
+    <div id="step-2" class="step-container space-y-8 animate-in hidden">
+        <h3 class="cta-title">PÁGINA 2: Sobre el proyecto</h3>
+
+        <div class="space-y-4">
+            <label class="cta-label"
+                >¿Cuál de estas áreas describe mejor tu desafío?</label
+            >
+            <div class="grid grid-cols-1 gap-4" id="area-options">
+                <button
+                    type="button"
+                    class="cta-option-card hover:bg-stone-100 dark:hover:bg-stone-800"
+                    data-value="Integración y sincronización de datos."
+                >
+                    Integración y sincronización de datos.
+                </button>
+                <button
+                    type="button"
+                    class="cta-option-card hover:bg-stone-100 dark:hover:bg-stone-800"
+                    data-value="Automatización del ciclo de vida del cliente."
+                >
+                    Automatización del ciclo de vida del cliente.
+                </button>
+                <button
+                    type="button"
+                    class="cta-option-card hover:bg-stone-100 dark:hover:bg-stone-800"
+                    data-value="Desarrollo de software a medida."
+                >
+                    Desarrollo de software a medida.
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <label class="cta-label"
+                >Describe brevemente el problema que buscas resolver:</label
+            >
+            <textarea
+                name="problem"
+                rows="3"
+                class="cta-input"
+                placeholder="El valor o el dolor..."></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <label class="cta-label">Deadline ideal:</label>
+                <select name="deadline" class="cta-input">
+                    <option value="1-3 meses">1-3 meses</option>
+                    <option value="3-6 meses">3-6 meses</option>
+                    <option value="Más de 6 meses">Más de 6 meses</option>
+                    <option value="Solo estoy explorando"
+                        >Solo estoy explorando</option
+                    >
+                </select>
+            </div>
+            <div class="space-y-4">
+                <label class="cta-label">Presupuesto estimado:</label>
+                <select name="budget" class="cta-input">
+                    <option value="Menos de $50 USD">Menos de $50 USD</option>
+                    <option value="$50 - $250 USD">$50 - $250 USD</option>
+                    <option value="$250 - $500 USD">$250 - $500 USD</option>
+                    <option value="Más de $500 USD">Más de $500 USD</option>
+                    <option value="Prefiero discutirlo"
+                        >Prefiero discutirlo</option
+                    >
+                </select>
+            </div>
+        </div>
+
+        <div class="flex gap-4">
+            <button type="button" class="prev-btn cta-button-secondary"
+                >Atrás</button
+            >
+            <button
+                type="button"
+                class="next-btn flex-[2] cta-button-primary group !text-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+                >Siguiente</button
+            >
+        </div>
+    </div>
+
+    <!-- Step 3: Fecha de reunión -->
+    <div
+        id="step-3"
+        class="step-container space-y-8 animate-in text-center py-12 hidden"
+    >
+        <h3 class="text-4xl md:text-6xl font-anton uppercase">
+            PÁGINA 3: Fecha de reunión
+        </h3>
+        <p class="text-xl">
+            Selecciona un espacio en mi calendario para profundizar en tu
+            proyecto.
+        </p>
+
+        <div
+            class="py-8 bg-stone-100 dark:bg-stone-800 border-2 border-dashed border-stone-400 text-stone-500 rounded-lg"
+        >
+            [ Aquí se integraría un Calendly o similar ]
+        </div>
+
+        <button
+            type="button"
+            id="submit-cta"
+            class="cta-button-primary group !text-3xl md:!text-5xl shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]"
+        >
+            <span class="btn-text">Agendar reunión →</span>
+            <span class="btn-loading hidden">Procesando...</span>
+        </button>
+    </div>
+
+    <!-- Step 4: Éxito -->
+    <div
+        id="step-4"
+        class="step-container space-y-8 animate-in text-center py-12 hidden"
+    >
+        <div
+            class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-emerald-500 text-white border-4 border-stone-900 mb-4"
+        >
+            <span class="material-icons-round text-6xl">check_circle</span>
+        </div>
+        <h3 class="text-4xl md:text-6xl font-anton uppercase">
+            ¡FECHA AGENDADA CON ÉXITO!
+        </h3>
+        <p class="text-xl">He recibido tus detalles. Nos vemos pronto.</p>
+
+        <div class="flex flex-wrap justify-center gap-4 pt-8">
+            <button
+                class="px-6 py-4 bg-white text-stone-900 border-2 border-stone-900 font-bold hover:bg-yellow-400 transition-colors"
+                >Añadir a Google Calendar</button
+            >
+            <button
+                class="px-6 py-4 bg-white text-stone-900 border-2 border-stone-900 font-bold hover:bg-yellow-400 transition-colors"
+                >Añadir a Apple Calendar</button
+            >
+            <button
+                class="px-6 py-4 bg-stone-900 text-white border-2 border-stone-900 font-bold hover:bg-stone-800 transition-colors"
+                >Descargar .ics</button
+            >
+        </div>
+    </div>
+</div>
+
+<script src="./CtaForm.ts"></script>
+
+<style>
+    .hidden {
+        display: none !important;
+    }
+    .animate-in {
+        animation: slide-up 0.4s ease-out forwards;
+    }
+    @keyframes slide-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>

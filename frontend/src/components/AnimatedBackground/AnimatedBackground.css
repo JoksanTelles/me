@@ -1,0 +1,27 @@
+@reference "../../styles/global.css";
+
+.bg-wrapper {
+    @apply fixed inset-0 -z-1 overflow-hidden pointer-events-none opacity-40;
+
+    @variant dark {
+        @apply opacity-20;
+    }
+}
+
+.bg-moving-grid {
+    @apply absolute -inset-[100px] transition-opacity duration-1000;
+    background-size: 60px 60px;
+    background-image: radial-gradient(
+        circle,
+        rgba(28, 25, 23, 0.4) 1.5px,
+        transparent 1.5px
+    );
+
+    @variant dark {
+        background-image: radial-gradient(
+            circle,
+            rgba(245, 245, 244, 0.2) 1.5px,
+            transparent 1.5px
+        );
+    }
+}

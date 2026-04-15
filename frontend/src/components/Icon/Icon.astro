@@ -1,0 +1,15 @@
+---
+interface Props {
+    name: string;
+    class?: string;
+}
+
+const { name, class: className = "" } = Astro.props;
+---
+
+<span
+    class={`material-icons-round select-none ${className}`}
+    aria-hidden="true"
+>
+    {name}
+</span>

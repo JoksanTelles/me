@@ -1,0 +1,29 @@
+@reference "../../styles/global.css";
+
+.newsletter-container {
+    @apply p-8 rounded-3xl bg-stone-900 border-4 border-stone-900 shadow-[8px_8px_0px_0px_#f43f5e] space-y-6 text-white;
+}
+
+.newsletter-title {
+    @apply text-3xl font-anton uppercase;
+}
+
+.newsletter-input {
+    @apply flex-1 px-4 py-3 rounded-xl bg-stone-950 border-2 border-stone-800 text-white transition-all;
+
+    @variant focus {
+        @apply outline-none ring-2 ring-rose-500/50;
+    }
+}
+
+.newsletter-button {
+    @apply px-6 py-3 rounded-xl bg-rose-600 text-white font-bold transition-colors border-2 border-stone-900;
+
+    @variant hover {
+        @apply bg-rose-500;
+    }
+
+    @variant disabled {
+        @apply opacity-50;
+    }
+}

@@ -1,0 +1,50 @@
+---
+import "./Newsletter.css";
+---
+
+<div class="newsletter-container">
+    <div class="space-y-2">
+        <h3 class="newsletter-title text-rose-500">Únete a la newsletter</h3>
+        <p class="text-stone-400 font-medium">
+            Recibe artículos sobre desarrollo, Go y Astro directamente en tu
+            bandeja de entrada.
+        </p>
+    </div>
+
+    <form id="newsletter-form" class="flex flex-col sm:flex-row gap-3">
+        <input
+            id="newsletter-email"
+            type="email"
+            placeholder="tu@email.com"
+            required
+            class="newsletter-input"
+        />
+        <button
+            id="newsletter-submit"
+            type="submit"
+            class="newsletter-button uppercase font-anton tracking-wider"
+        >
+            <span class="idle">Suscribirme</span>
+            <span class="loading hidden">Enviando...</span>
+            <span class="success hidden">¡Listo!</span>
+        </button>
+    </form>
+
+    <p
+        id="newsletter-success-msg"
+        class="text-emerald-400 text-sm font-bold animate-pulse hidden"
+    >
+        ¡Gracias por suscribirte! Revisa tu correo pronto.
+    </p>
+    <p id="newsletter-error-msg" class="text-rose-400 text-sm font-bold hidden">
+        Ocurrió un error. Por favor intenta de nuevo.
+    </p>
+</div>
+
+<script src="./Newsletter.ts"></script>
+
+<style>
+    .hidden {
+        display: none;
+    }
+</style>

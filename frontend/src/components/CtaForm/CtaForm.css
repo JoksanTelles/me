@@ -1,0 +1,106 @@
+@reference "../../styles/global.css";
+
+.cta-form-container {
+    @apply max-w-3xl mx-auto bg-stone-50 border-4 border-stone-900 shadow-[12px_12px_0px_0px_#f43f5e] p-8;
+
+    @variant dark {
+        @apply bg-stone-900 border-stone-100 shadow-[12px_12px_0px_0px_#fb7185];
+    }
+
+    @variant md {
+        @apply p-12;
+    }
+}
+
+.cta-progress-track {
+    @apply mb-12 h-4 w-full bg-stone-200 border-2 border-stone-900;
+
+    @variant dark {
+        @apply bg-stone-800 border-stone-100;
+    }
+}
+
+.cta-progress-bar {
+    @apply h-full bg-rose-500 transition-all duration-500 ease-out;
+}
+
+.cta-title {
+    @apply text-4xl font-anton uppercase leading-none;
+
+    @variant md {
+        @apply text-5xl;
+    }
+}
+
+.cta-input {
+    @apply w-full p-4 bg-transparent border-2 border-stone-900 outline-none transition-colors;
+
+    @variant dark {
+        @apply border-stone-100;
+    }
+
+    @variant focus {
+        @apply bg-yellow-400 text-stone-900;
+    }
+}
+
+.cta-label {
+    @apply block font-bold mb-2;
+}
+
+.cta-button-primary {
+    @apply w-full relative inline-flex items-center justify-center px-8 py-6 font-anton text-2xl bg-rose-500 text-white border-4 border-stone-900 transition-all uppercase;
+    @apply shadow-[8px_8px_0px_0px_rgba(0,0,0,1)];
+
+    @variant md {
+        @apply text-4xl;
+    }
+
+    @variant dark {
+        @apply border-stone-100 shadow-[8px_8px_0px_0px_rgba(255,255,255,1)];
+    }
+
+    @variant hover {
+        @apply translate-x-[4px] translate-y-[4px] shadow-none;
+    }
+}
+
+.cta-button-secondary {
+    @apply p-6 font-anton text-2xl border-4 border-stone-900 transition-colors uppercase;
+
+    @variant dark {
+        @apply border-stone-100;
+    }
+
+    @variant hover {
+        @apply bg-stone-100;
+    }
+
+    @variant dark {
+        @variant hover {
+            @apply bg-stone-800;
+        }
+    }
+}
+
+.cta-option-card {
+    @apply p-4 text-left border-2 border-stone-900 transition-all font-bold;
+
+    @variant dark {
+        @apply border-stone-100;
+    }
+
+    @variant hover {
+        @apply bg-stone-100;
+    }
+
+    @variant dark {
+        @variant hover {
+            @apply bg-stone-800;
+        }
+    }
+}
+
+.cta-option-card-active {
+    @apply bg-yellow-400 text-stone-900 transform translate-x-1 translate-y-1 shadow-none;
+}

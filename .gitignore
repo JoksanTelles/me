@@ -1,24 +1,46 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
+# Dependencies
+node_modules/
+frontend/node_modules/
 
-# Node dependencies
-node_modules
+# Build outputs
+dist/
+frontend/dist/
+bin/
+backend/bin/
 
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
+# Environment
 .env
 .env.*
 !.env.example
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Backend (Go)
+backend/*.exe
+backend/*.test
+backend/*.out
+backend/me.db*
+backend/me.db-journal
+backend/me.db-shm
+backend/me.db-wal
+
+# Frontend (Astro/Bun)
+.astro/
+frontend/.astro/
+frontend/.vercel/
+frontend/.netlify/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/bun.lockb
+*.log
+
+# Temp files
+/tmp/
+.nuxt/
+.output/
+.nitro/
+.cache/
