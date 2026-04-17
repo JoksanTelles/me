@@ -19,14 +19,13 @@ const {
 		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-		<!-- Google Fonts: Anton (Titles) & Space Grotesk (Body) -->
+		<!-- Google Fonts: Playfair Display (Titles) & Poppins (Body) -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+			href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
 			rel="stylesheet"
 		/>
 
@@ -35,52 +34,41 @@ const {
 			href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
 			rel="stylesheet"
 		/>
-
-		<script is:inline>
-			const theme = (() => {
-				if (
-					typeof localStorage !== "undefined" &&
-					localStorage.getItem("theme")
-				) {
-					return localStorage.getItem("theme");
-				}
-				if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-					return "dark";
-				}
-				return "light";
-			})();
-
-			if (theme === "light") {
-				document.documentElement.classList.remove("dark");
-			} else {
-				document.documentElement.classList.add("dark");
-			}
-			window.localStorage.setItem("theme", theme);
-		</script>
 	</head>
 	<body
-		class="bg-stone-50 dark:bg-stone-950 text-stone-900 dark:text-stone-100 font-['Space_Grotesk',sans-serif] selection:bg-rose-500 selection:text-white transition-colors duration-300"
+		class="bg-white text-slate-900 font-['Poppins',sans-serif] antialiased selection:bg-rose-100 selection:text-rose-900"
 	>
 		<slot />
 	</body>
 </html>
 
 <style is:global>
-	/* Brutalist scrollbar */
+	/* Custom scrollbar */
 	::-webkit-scrollbar {
-		width: 12px;
+		width: 6px;
 	}
 	::-webkit-scrollbar-track {
-		background: var(--color-stone-100, #f5f5f4);
-	}
-	.dark ::-webkit-scrollbar-track {
-		background: var(--color-stone-900, #1c1917);
+		@apply bg-slate-50;
 	}
 	::-webkit-scrollbar-thumb {
-		background: var(--color-rose-500, #f43f5e);
-		border: 3px solid var(--color-stone-100, #f5f5f4);
+		@apply bg-slate-200;
 	}
-	.dark ::-webkit-scrollbar-thumb {
-		border: 3px solid var(--color-stone-900, #1c1917);
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-slate-300;
+	}
+
+	/* Typography resets */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-family: "Playfair Display", serif;
+		@apply tracking-tight leading-tight;
+	}
+
+	p {
+		@apply leading-relaxed;
 	}
 </style>

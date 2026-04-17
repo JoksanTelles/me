@@ -1,6 +1,4 @@
 ---
-import "./Title.css";
-
 interface Props {
     level?: 1 | 2 | 3 | 4;
     class?: string;
@@ -10,15 +8,13 @@ const { level = 1, class: className = "" } = Astro.props;
 const Tag = `h${level}` as any;
 
 const styles = {
-    1: "text-6xl sm:text-8xl md:text-9xl lg:text-[11rem] leading-[0.85] font-anton uppercase",
-    2: "text-5xl md:text-8xl font-anton uppercase leading-none",
-    3: "text-4xl md:text-5xl font-anton uppercase",
-    4: "text-2xl md:text-3xl font-anton uppercase",
+    1: "text-7xl md:text-9xl lg:text-[12rem] font-semibold leading-[0.85] tracking-tighter",
+    2: "text-5xl md:text-8xl font-medium tracking-tight",
+    3: "text-4xl md:text-6xl font-medium tracking-tight",
+    4: "text-2xl md:text-4xl font-medium tracking-tight",
 };
 
-const baseStyles = "transition-colors duration-300";
-// Theme logic is usually handled by global CSS classes in this project (dark:text-stone-100)
-// but we can add utility classes to the props.
+const baseStyles = "transition-all duration-300 text-slate-950 font-heading";
 ---
 
 <Tag class:list={[baseStyles, styles[level as keyof typeof styles], className]}>

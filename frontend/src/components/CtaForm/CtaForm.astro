@@ -10,9 +10,9 @@ import "./CtaForm.css";
     </div>
 
     <!-- Step 1: Datos Generales -->
-    <div id="step-1" class="step-container space-y-8 animate-in">
-        <h3 class="cta-title">PÁGINA 1: Datos generales</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div id="step-1" class="step-container space-y-12 animate-in">
+        <h3 class="cta-title">01 // Datos generales</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div class="space-y-2">
                 <label class="cta-label">Nombre</label>
                 <input
@@ -59,38 +59,36 @@ import "./CtaForm.css";
                 placeholder="Breve descripción..."></textarea>
         </div>
         <button type="button" class="next-btn cta-button-primary group">
-            Siguiente paso
-            <span class="material-icons-round ml-2 text-4xl">arrow_forward</span
-            >
+            Siguiente paso →
         </button>
     </div>
 
     <!-- Step 2: Sobre el proyecto -->
-    <div id="step-2" class="step-container space-y-8 animate-in hidden">
-        <h3 class="cta-title">PÁGINA 2: Sobre el proyecto</h3>
+    <div id="step-2" class="step-container space-y-12 animate-in hidden">
+        <h3 class="cta-title">02 // Sobre el proyecto</h3>
 
-        <div class="space-y-4">
+        <div class="space-y-6">
             <label class="cta-label"
                 >¿Cuál de estas áreas describe mejor tu desafío?</label
             >
             <div class="grid grid-cols-1 gap-4" id="area-options">
                 <button
                     type="button"
-                    class="cta-option-card hover:bg-stone-100 dark:hover:bg-stone-800"
+                    class="cta-option-card"
                     data-value="Integración y sincronización de datos."
                 >
                     Integración y sincronización de datos.
                 </button>
                 <button
                     type="button"
-                    class="cta-option-card hover:bg-stone-100 dark:hover:bg-stone-800"
+                    class="cta-option-card"
                     data-value="Automatización del ciclo de vida del cliente."
                 >
                     Automatización del ciclo de vida del cliente.
                 </button>
                 <button
                     type="button"
-                    class="cta-option-card hover:bg-stone-100 dark:hover:bg-stone-800"
+                    class="cta-option-card"
                     data-value="Desarrollo de software a medida."
                 >
                     Desarrollo de software a medida.
@@ -139,9 +137,7 @@ import "./CtaForm.css";
             <button type="button" class="prev-btn cta-button-secondary"
                 >Atrás</button
             >
-            <button
-                type="button"
-                class="next-btn flex-[2] cta-button-primary group !text-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]"
+            <button type="button" class="next-btn flex-2 cta-button-primary"
                 >Siguiente</button
             >
         </div>
@@ -150,18 +146,16 @@ import "./CtaForm.css";
     <!-- Step 3: Fecha de reunión -->
     <div
         id="step-3"
-        class="step-container space-y-8 animate-in text-center py-12 hidden"
+        class="step-container space-y-12 animate-in text-center py-12 hidden"
     >
-        <h3 class="text-4xl md:text-6xl font-anton uppercase">
-            PÁGINA 3: Fecha de reunión
-        </h3>
-        <p class="text-xl">
+        <h3 class="text-4xl font-heading">03 // Fecha de reunión</h3>
+        <p class="text-xl font-body text-slate-500 font-light">
             Selecciona un espacio en mi calendario para profundizar en tu
             proyecto.
         </p>
 
         <div
-            class="py-8 bg-stone-100 dark:bg-stone-800 border-2 border-dashed border-stone-400 text-stone-500 rounded-lg"
+            class="py-12 bg-slate-50 border-2 border-dashed border-slate-100 text-slate-400 font-body italic rounded-sm"
         >
             [ Aquí se integraría un Calendly o similar ]
         </div>
@@ -169,7 +163,7 @@ import "./CtaForm.css";
         <button
             type="button"
             id="submit-cta"
-            class="cta-button-primary group !text-3xl md:!text-5xl shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]"
+            class="cta-button-primary w-auto! px-12 mx-auto"
         >
             <span class="btn-text">Agendar reunión →</span>
             <span class="btn-loading hidden">Procesando...</span>
@@ -179,30 +173,26 @@ import "./CtaForm.css";
     <!-- Step 4: Éxito -->
     <div
         id="step-4"
-        class="step-container space-y-8 animate-in text-center py-12 hidden"
+        class="step-container space-y-12 animate-in text-center py-24 hidden"
     >
         <div
-            class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-emerald-500 text-white border-4 border-stone-900 mb-4"
+            class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-slate-900 text-white mb-8"
         >
-            <span class="material-icons-round text-6xl">check_circle</span>
+            <span class="material-icons-round text-5xl">check</span>
         </div>
-        <h3 class="text-4xl md:text-6xl font-anton uppercase">
-            ¡FECHA AGENDADA CON ÉXITO!
-        </h3>
-        <p class="text-xl">He recibido tus detalles. Nos vemos pronto.</p>
+        <h3 class="text-5xl font-heading">Confirmado.</h3>
+        <p class="text-xl font-body text-slate-500 font-light">
+            He recibido tus detalles. Nos vemos pronto.
+        </p>
 
-        <div class="flex flex-wrap justify-center gap-4 pt-8">
+        <div class="flex flex-wrap justify-center gap-8 pt-12">
             <button
-                class="px-6 py-4 bg-white text-stone-900 border-2 border-stone-900 font-bold hover:bg-yellow-400 transition-colors"
-                >Añadir a Google Calendar</button
+                class="text-slate-900 border-b border-slate-900 pb-1 font-body hover:text-brand-rose hover:border-brand-rose transition-all"
+                >Google Calendar</button
             >
             <button
-                class="px-6 py-4 bg-white text-stone-900 border-2 border-stone-900 font-bold hover:bg-yellow-400 transition-colors"
-                >Añadir a Apple Calendar</button
-            >
-            <button
-                class="px-6 py-4 bg-stone-900 text-white border-2 border-stone-900 font-bold hover:bg-stone-800 transition-colors"
-                >Descargar .ics</button
+                class="text-slate-900 border-b border-slate-900 pb-1 font-body hover:text-brand-rose hover:border-brand-rose transition-all"
+                >Apple Calendar</button
             >
         </div>
     </div>
@@ -215,12 +205,12 @@ import "./CtaForm.css";
         display: none !important;
     }
     .animate-in {
-        animation: slide-up 0.4s ease-out forwards;
+        animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
     @keyframes slide-up {
         from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(10px);
         }
         to {
             opacity: 1;

@@ -1,28 +1,40 @@
 ---
 interface Props {
-    size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl";
+    size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
     class?: string;
     italic?: boolean;
+    light?: boolean;
+    medium?: boolean;
 }
 
-const { size = "base", class: className = "", italic = false } = Astro.props;
+const {
+    size = "base",
+    class: className = "",
+    italic = false,
+    light = false,
+    medium = false,
+} = Astro.props;
 
 const sizes = {
     xs: "text-xs",
     sm: "text-sm",
     base: "text-base",
-    lg: "text-lg",
+    lg: "text-lg md:text-xl",
     xl: "text-xl md:text-2xl",
     "2xl": "text-2xl md:text-3xl",
+    "3xl": "text-3xl md:text-4xl",
+    "4xl": "text-4xl md:text-5xl",
+    "5xl": "text-5xl md:text-7xl",
 };
 ---
 
 <p
     class:list={[
-        "leading-relaxed transition-colors duration-300",
+        "leading-relaxed transition-all duration-300 font-body",
         sizes[size as keyof typeof sizes],
         italic ? "italic" : "",
-        "font-medium text-stone-600 dark:text-stone-400",
+        light ? "font-extralight" : medium ? "font-medium" : "font-normal",
+        "text-slate-600",
         className,
     ]}
 >

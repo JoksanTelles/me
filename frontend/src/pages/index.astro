@@ -1,101 +1,82 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Icon from "../components/Icon/Icon.astro";
-import AnimatedBackground from "../components/AnimatedBackground/AnimatedBackground.astro";
-import ThemeToggle from "../components/ThemeToggle/ThemeToggle.astro";
 import CtaForm from "../components/CtaForm/CtaForm.astro";
 import Title from "../components/ui/typography/Title/Title.astro";
 import Hero from "../sections/Hero/Hero.astro";
 import Badge from "../components/ui/elements/Badge/Badge.astro";
+import Button from "../components/ui/elements/Button/Button.astro";
 import Text from "../components/ui/typography/Text/Text.astro";
 
 const siteName = import.meta.env.PUBLIC_SITE_NAME || "Joksan Telles";
 ---
 
-<Layout title={`${siteName} — Product Designer and Developer`}>
-    <AnimatedBackground />
-    <ThemeToggle />
-
-    <!-- SECTION 1: HERO -->
+<Layout title={`${siteName} — Design & Development`}>
+    <!-- HERO -->
     <Hero>
         <Fragment slot="content">
-            <Title>
-                <span class="text-rose-500">Joksan Télles</span> — Product Designer
-                and Developer
-            </Title>
-            <Badge> Diseño sistemas que hacen obvio lo complejo :) </Badge>
-            <Text size="2xl">
-                Soy una persona creativa, de mente curiosa y multifacética. Me
-                apasiona descubrir la solución a los problemas.
+            <div class="space-y-4">
+                <Badge> Product Designer & Developer </Badge>
+                <Title>
+                    Joksan <span class="highlight">Télles</span>
+                </Title>
+            </div>
+            <Text
+                size="2xl"
+                light
+                class="max-w-3xl leading-[1.1] text-slate-400"
+            >
+                Diseño sistemas que hacen <span
+                    class="text-slate-900 font-normal">obvio lo complejo.</span
+                >
+                <span class="text-brand-yellow font-normal">.</span>
             </Text>
         </Fragment>
         <Fragment slot="buttons">
-            <a
-                href="#contacto"
-                class="group relative inline-flex items-center justify-center px-10 py-6 font-anton text-2xl md:text-5xl bg-rose-500 text-white border-4 border-stone-900 dark:border-stone-100 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)] transition-all uppercase"
-            >
-                Contáctame
-            </a>
-            <a
-                href="#lo-que-hago"
-                class="group relative inline-flex items-center justify-center px-10 py-6 font-anton text-2xl md:text-5xl bg-stone-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 border-4 border-stone-900 dark:border-stone-100 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] dark:shadow-[12px_12px_0px_0px_rgba(255,255,255,1)] transition-all uppercase"
-            >
-                Lo qué hago
-            </a>
+            <Button href="#contacto" variant="primary"> Contáctame </Button>
+            <Button href="#principios" variant="secondary">
+                Explorar trabajo →
+            </Button>
         </Fragment>
     </Hero>
 
-    <!-- SECTION 2: BELIEFS -->
-    <section
-        id="lo-que-hago"
-        class="py-32 px-6 bg-stone-100 dark:bg-stone-900/50 border-y-4 border-stone-900 dark:border-stone-100"
-    >
+    <!-- BELIEFS -->
+    <section id="principios" class="py-48 px-6 bg-slate-50">
         <div class="max-w-7xl mx-auto">
-            <h2 class="text-5xl md:text-8xl mb-24 leading-none">
-                Mis principios <br /> de diseño
+            <h2
+                class="text-5xl md:text-7xl mb-32 font-light tracking-tight text-slate-900"
+            >
+                Principios <span class="highlight italic">fundamentales</span>
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-24 md:gap-32">
                 {
                     [
                         {
                             title: "Claridad",
-                            descriptor:
-                                "El diseño que elimina fricción y maximiza el valor.",
-                            desc: "Cada decisión visual o funcional debe servir al usuario para lograr su objetivo con el mínimo esfuerzo. El buen diseño reduce el esfuerzo cognitivo y amplifica la claridad.",
-                            icon: "visibility",
+                            descriptor: "Eliminar fricción.",
+                            desc: "Cada decisión visual o funcional debe servir al usuario para lograr su objetivo con el mínimo esfuerzo.",
                         },
                         {
                             title: "Automatización",
-                            descriptor:
-                                "La automatización como asistente, no reemplazo.",
-                            desc: "Un sistema interno bien diseñado da control real de procesos, datos y resultados. Diseñar control es permitir decisiones seguras y contextos previsibles.",
-                            icon: "auto_mode",
+                            descriptor: "Sistemas eficientes.",
+                            desc: "Un sistema interno bien diseñado da control real de procesos, datos y resultados.",
                         },
                         {
                             title: "Seguridad",
-                            descriptor:
-                                "Diseñar con seguridad es diseñar con respeto.",
-                            desc: "La confianza del usuario es un activo que se gana con transparencia, control y protección real de sus datos. La seguridad empieza en el diseño, no en la ingeniería.",
-                            icon: "security",
+                            descriptor: "Respeto al usuario.",
+                            desc: "La confianza se gana con transparencia y protección absoluta de la información.",
                         },
-                    ].map((belief) => (
-                        <div class="group p-8 bg-stone-50 dark:bg-stone-950 border-4 border-stone-900 dark:border-stone-100 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] dark:shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:translate-y-[-8px] transition-transform">
-                            <div class="w-16 h-16 bg-yellow-400 border-2 border-stone-900 flex items-center justify-center mb-8">
-                                <Icon
-                                    name={belief.icon}
-                                    class="text-4xl text-stone-900"
-                                />
-                            </div>
-                            <h3 class="text-4xl mb-4 text-rose-500">
+                    ].map((belief, i) => (
+                        <div class="space-y-8">
+                            <p class="text-[10px] uppercase tracking-[0.4em] text-slate-300 font-bold">
+                                0{i + 1} // {belief.descriptor}
+                            </p>
+                            <h3 class="text-4xl font-medium text-slate-900 underline decoration-slate-200 underline-offset-8">
                                 {belief.title}
                             </h3>
-                            <p class="text-lg font-bold italic mb-6 text-stone-500 underline decoration-yellow-400 decoration-4 underline-offset-4">
-                                {belief.descriptor}
-                            </p>
-                            <p class="text-stone-600 dark:text-stone-400 leading-relaxed">
+                            <Text size="xl" light class="leading-relaxed">
                                 {belief.desc}
-                            </p>
+                            </Text>
                         </div>
                     ))
                 }
@@ -103,233 +84,167 @@ const siteName = import.meta.env.PUBLIC_SITE_NAME || "Joksan Telles";
         </div>
     </section>
 
-    <!-- SECTION 3: SERVICES -->
-    <section class="py-32 px-6 max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-24">
-            <div>
-                <h2 class="text-6xl md:text-8xl mb-8 leading-[0.9]">
-                    Soluciones <br /> Digitales
-                </h2>
-                <p
-                    class="text-2xl text-stone-500 leading-relaxed font-medium underline decoration-stone-300 dark:decoration-stone-700 decoration-1 underline-offset-12"
-                >
-                    Mi trabajo se centra en optimizar procesos, integrar
-                    plataformas y crear herramientas web que potencien la
-                    eficiencia operativa.
-                </p>
-            </div>
-
-            <div class="space-y-16">
-                <div class="space-y-6">
-                    <div class="flex items-start gap-4">
-                        <span class="text-4xl font-anton text-rose-500">I.</span
-                        >
-                        <h3 class="text-3xl md:text-4xl">
-                            Integración y Sincronización de Datos
-                        </h3>
-                    </div>
-                    <p class="text-lg text-stone-600 dark:text-stone-300">
-                        Diseño flujos que conectan plataformas y bases de datos
-                        para mantener la información actualizada en todo
-                        momento.
-                    </p>
-                    <ul class="space-y-3">
-                        {
-                            [
-                                "Integraciones entre CRM, ERP y e-commerce.",
-                                "Conexiones entre APIs, hojas de cálculo y sistemas locales.",
-                                "Consolidación de datos dispersos para análisis en tiempo real.",
-                            ].map((item) => (
-                                <li class="flex items-center gap-2 font-bold">
-                                    <Icon
-                                        name="chevron_right"
-                                        class="text-yellow-500"
-                                    />
-                                    {item}
-                                </li>
-                            ))
-                        }
-                    </ul>
+    <!-- SOLUTIONS -->
+    <section class="py-48 px-6 bg-slate-100/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-32">
+                <div class="space-y-12">
+                    <h2
+                        class="text-6xl md:text-8xl font-light tracking-tighter leading-none"
+                    >
+                        Soluciones <br />
+                        <span class="italic font-normal">Digitales</span>
+                    </h2>
+                    <Text
+                        size="2xl"
+                        light
+                        class="max-w-md italic border-l-4 border-slate-200 pl-8"
+                    >
+                        Optimizando la intersección entre diseño, datos y
+                        procesos operativos.
+                    </Text>
                 </div>
 
-                <div class="space-y-6">
-                    <div class="flex items-start gap-4">
-                        <span class="text-4xl font-anton text-rose-500"
-                            >II.</span
-                        >
-                        <h3 class="text-3xl md:text-4xl">
-                            Automatización del Ciclo de Vida del Cliente
+                <div class="space-y-32">
+                    <div class="space-y-12">
+                        <h3 class="text-4xl font-medium text-slate-900">
+                            Integración & Sincronización
                         </h3>
+                        <ul class="space-y-8">
+                            {
+                                [
+                                    "CRM, ERP & E-commerce",
+                                    "Ecosistemas de APIs",
+                                    "Datos en tiempo real",
+                                ].map((item) => (
+                                    <li class="text-2xl text-slate-400 font-light flex items-center gap-6 group hover:text-slate-900 transition-colors">
+                                        <span class="w-12 h-px bg-slate-300 group-hover:bg-brand-rose transition-colors" />
+                                        {item}
+                                    </li>
+                                ))
+                            }
+                        </ul>
                     </div>
-                    <p class="text-lg text-stone-600 dark:text-stone-300">
-                        Automatizo la gestión completa del cliente, desde el
-                        momento en que deja sus datos hasta el seguimiento
-                        post-venta.
-                    </p>
-                    <ul class="space-y-3">
-                        {
-                            [
-                                "Captura y validación automática de leads.",
-                                "Lanzamiento de campañas personalizadas por correo o redes.",
-                                "Automatización de recordatorios, encuestas y fidelización.",
-                            ].map((item) => (
-                                <li class="flex items-center gap-2 font-bold">
-                                    <Icon
-                                        name="chevron_right"
-                                        class="text-yellow-500"
-                                    />
-                                    {item}
-                                </li>
-                            ))
-                        }
-                    </ul>
-                </div>
 
-                <div class="space-y-6">
-                    <div class="flex items-start gap-4">
-                        <span class="text-4xl font-anton text-rose-500"
-                            >III.</span
-                        >
-                        <h3 class="text-3xl md:text-4xl">
-                            Desarrollo de software a medida
+                    <div class="space-y-12">
+                        <h3 class="text-4xl font-medium text-slate-900">
+                            Automatización Operativa
                         </h3>
+                        <ul class="space-y-8">
+                            {
+                                [
+                                    "Gestión inteligente de leads",
+                                    "Workflows asíncronos",
+                                    "Fidelización automática",
+                                ].map((item) => (
+                                    <li class="text-2xl text-slate-400 font-light flex items-center gap-6 group hover:text-slate-900 transition-colors">
+                                        <span class="w-12 h-px bg-slate-300 group-hover:bg-brand-rose transition-colors" />
+                                        {item}
+                                    </li>
+                                ))
+                            }
+                        </ul>
                     </div>
-                    <p class="text-lg text-stone-600 dark:text-stone-300">
-                        Desarrollo aplicaciones web adaptadas a las necesidades
-                        de cada cliente que sean ligeras, seguras y escalables.
-                    </p>
-                    <ul class="space-y-3">
-                        {
-                            [
-                                "Aplicaciones de gestión interna empresarial.",
-                                "Paneles administrativos y sistemas de monitoreo.",
-                                "Dashboards interactivos y visualización de datos.",
-                            ].map((item) => (
-                                <li class="flex items-center gap-2 font-bold">
-                                    <Icon
-                                        name="chevron_right"
-                                        class="text-yellow-500"
-                                    />
-                                    {item}
-                                </li>
-                            ))
-                        }
-                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 4: STACK -->
-    <section
-        class="py-32 px-6 bg-stone-900 text-stone-100 border-y-10 border-yellow-400"
-    >
-        <div class="max-w-7xl mx-auto text-center">
-            <h2 class="text-5xl md:text-8xl italic mb-8">
-                Mi ecosistema de herramientas
-            </h2>
-            <p
-                class="text-xl md:text-2xl text-stone-400 max-w-3xl mx-auto mb-20 leading-relaxed"
+    <!-- STACK / TOOLS -->
+    <section class="py-48 px-6 bg-[#020617] text-white">
+        <div
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16"
+        >
+            <h2
+                class="text-xl uppercase tracking-[0.5em] text-slate-700 font-bold min-w-[200px]"
             >
-                Este es mi stack base que mantiene un equilibrio entre
-                rendimiento, escalabilidad y facilidad de mantenimiento.
-            </p>
-
-            <div class="flex flex-wrap justify-center gap-4 md:gap-8">
+                TOOLKIT
+            </h2>
+            <div class="flex flex-wrap gap-x-12 gap-y-12">
                 {
                     [
                         "Figma",
                         "HTML5",
-                        "CSS3",
-                        "JavaScript",
-                        "Python",
-                        "Node.js",
                         "Astro",
+                        "Python",
                         "FastAPI",
-                        "SQLite",
-                        "PostgreSQL",
-                        "Scrum",
                         "n8n",
-                        "GitHub",
                         "Docker",
-                        "DigitalOcean",
-                        "Netlify",
                         "Vue",
-                        "Postman",
-                        "Notion",
-                        "VSCode",
-                        "EOS",
                     ].map((tool) => (
-                        <span class="text-3xl md:text-5xl font-anton opacity-40 hover:opacity-100 hover:text-rose-500 transition-all cursor-default uppercase">
-                            {tool}
-                        </span>
+                        <div class="group cursor-default">
+                            <span class="text-2xl md:text-4xl font-light text-slate-600 group-hover:text-brand-rose transition-all duration-500 italic block">
+                                {tool}
+                            </span>
+                        </div>
                     ))
                 }
             </div>
         </div>
     </section>
 
-    <!-- SECTION 6: CTA -->
-    <section id="contacto" class="py-48 px-6 bg-yellow-400 text-stone-900">
-        <div class="max-w-7xl mx-auto mb-24 text-center">
-            <h2 class="text-6xl md:text-[8rem] leading-[0.8] mb-8">
-                ¿Necesitas convertir <br /> una idea en realidad?
-            </h2>
-            <p
-                class="text-2xl md:text-4xl font-bold max-w-4xl mx-auto leading-tight italic"
-            >
-                Agenda una reunión para ayudarte a transformar tu idea en un
-                producto funcional y escalable.
-            </p>
-        </div>
+    <!-- CONTACT FORM SECTION -->
+    <section id="contacto" class="py-48 px-6 bg-slate-50">
+        <div class="max-w-4xl mx-auto space-y-24">
+            <div class="text-center space-y-8">
+                <h2
+                    class="text-7xl md:text-9xl font-semibold tracking-tighter leading-none"
+                >
+                    Hablemos <span class="highlight">.</span>
+                </h2>
+                <Text size="2xl" light class="opacity-60">
+                    Propuestas, colaboraciones o consultas técnicas.
+                </Text>
+            </div>
 
-        <CtaForm />
+            <div class="pt-12">
+                <div class="bg-white p-12 shadow-sm border border-slate-100">
+                    <CtaForm />
+                </div>
+            </div>
+        </div>
     </section>
 
+    <!-- FOOTER -->
     <footer
-        class="py-12 px-6 bg-stone-950 text-stone-500 font-bold border-t-2 border-stone-800"
+        class="py-24 px-6 border-t border-slate-50 text-slate-400 text-xs tracking-widest uppercase"
     >
         <div
-            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8"
+            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12"
         >
-            <div class="text-xl">
+            <div class="font-bold">
                 © {new Date().getFullYear()}
-                {siteName} / EOS Ecosystem.
+                {siteName}
             </div>
-            <div class="flex gap-8 text-stone-100">
-                <a href="#" class="hover:text-rose-500 transition-colors"
-                    >LINKEDIN</a
+            <div class="flex gap-12 font-medium">
+                <a href="#" class="hover:text-brand-rose transition-colors"
+                    >LinkedIn</a
                 >
-                <a href="#" class="hover:text-rose-500 transition-colors"
-                    >GITHUB</a
+                <a href="#" class="hover:text-brand-rose transition-colors"
+                    >GitHub</a
                 >
-                <a href="#" class="hover:text-rose-500 transition-colors"
-                    >X / TWITTER</a
+                <a href="#" class="hover:text-brand-rose transition-colors"
+                    >Dribbble</a
                 >
             </div>
         </div>
     </footer>
 </Layout>
 
-<style>
-    h1,
-    h2,
-    h3 {
-        font-family: "Anton", sans-serif;
+<style is:global>
+    @reference "../styles/global.css";
+
+    /* Absolute legibility and clean spacing */
+    .highlight {
+        color: var(--color-brand-rose);
     }
 
-    .animate-in {
-        animation: slide-up 1s ease-out forwards;
+    section {
+        @apply outline-none transition-none;
     }
 
-    @keyframes slide-up {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    ::selection {
+        @apply bg-rose-50;
+        color: var(--color-brand-rose);
     }
 </style>
