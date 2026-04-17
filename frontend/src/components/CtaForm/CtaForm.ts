@@ -90,10 +90,7 @@ export function initCtaForm() {
             const response = await fetch(`${apiUrl}/api/contact`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...formData,
-                    message: `Prob: ${formData.problem} | Desc: ${formData.description} | Bud: ${formData.budget}`,
-                }),
+                body: JSON.stringify(formData),
             });
 
             if (response.ok) {

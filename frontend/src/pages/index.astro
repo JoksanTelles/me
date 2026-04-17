@@ -240,11 +240,13 @@ const siteName = import.meta.env.PUBLIC_SITE_NAME || "Joksan Telles";
     }
 
     section {
-        @apply outline-none transition-none;
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+        transition-property: none;
     }
 
     ::selection {
-        @apply bg-rose-50;
+        background-color: var(--color-rose-50);
         color: var(--color-brand-rose);
     }
 </style>

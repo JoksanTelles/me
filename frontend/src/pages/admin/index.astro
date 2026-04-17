@@ -1,0 +1,508 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Title from "../../components/ui/typography/Title/Title.astro";
+import Text from "../../components/ui/typography/Text/Text.astro";
+import Button from "../../components/ui/elements/Button/Button.astro";
+
+const siteName = import.meta.env.PUBLIC_SITE_NAME || "Joksan.dev";
+---
+
+<Layout title={`Admin | ${siteName}`}>
+    <div class="min-h-screen bg-white py-24 px-6" id="admin-root">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <div
+                class="flex flex-col md:flex-row justify-between items-end gap-8 mb-16 pb-12 border-b border-slate-50"
+            >
+                <div class="space-y-4">
+                    <Text
+                        size="sm"
+                        class="uppercase tracking-widest text-slate-300 font-bold"
+                        >Workspace</Text
+                    >
+                    <Title level={2}
+                        >Admin <span class="highlight">Dashboard</span></Title
+                    >
+                </div>
+                <div id="admin-actions" class="hidden items-center gap-8">
+                    <div class="flex bg-slate-50 p-1 rounded-sm">
+                        <button
+                            id="tab-leads"
+                            class="px-6 py-2 text-sm font-medium transition-all bg-white shadow-sm text-slate-900 rounded-sm"
+                            >Leads</button
+                        >
+                        <button
+                            id="tab-subs"
+                            class="px-6 py-2 text-sm font-medium transition-all text-slate-400 hover:text-slate-900"
+                            >Subscriptores</button
+                        >
+                    </div>
+                    <button
+                        id="logout-btn"
+                        class="text-slate-300 hover:text-brand-rose transition-colors font-body uppercase tracking-tighter text-xs"
+                        >Cerrar Sesión</button
+                    >
+                </div>
+            </div>
+
+            <!-- Login State -->
+            <div
+                id="login-section"
+                class="max-w-md mx-auto py-32 text-center space-y-12 animate-in mt-12"
+            >
+                <div class="space-y-4">
+                    <Text size="xl" light>Acceso Restringido</Text>
+                    <Text size="sm" class="text-slate-400"
+                        >Introduce tus credenciales maestras para gestionar la
+                        plataforma.</Text
+                    >
+                </div>
+                <div class="space-y-6">
+                    <input
+                        type="email"
+                        id="admin-email"
+                        placeholder="tu@email.com"
+                        class="w-full py-4 bg-transparent border-b border-slate-100 outline-none transition-all text-center text-xl font-body focus:border-slate-900 mb-4"
+                    />
+                    <input
+                        type="password"
+                        id="admin-token"
+                        placeholder="••••••••••••"
+                        class="w-full py-4 bg-transparent border-b border-slate-100 outline-none transition-all text-center text-xl font-body focus:border-slate-900"
+                    />
+                    <div
+                        id="login-error"
+                        class="hidden text-rose-500 text-sm font-body"
+                    >
+                        Credenciales inválidas o error de conexión.
+                    </div>
+                    <button
+                        id="login-btn"
+                        class="w-full py-6 bg-slate-900 text-white hover:bg-brand-rose transition-all font-body font-medium text-xl"
+                    >
+                        Desbloquear Panel
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard State -->
+            <div id="dashboard-section" class="hidden space-y-12 animate-in">
+                <!-- Leads Content -->
+                <div id="leads-content" class="space-y-8">
+                    <div class="grid grid-cols-1 gap-1">
+                        <table class="w-full text-left font-body">
+                            <thead>
+                                <tr
+                                    class="border-b border-slate-100 text-[10px] uppercase tracking-widest text-slate-300"
+                                >
+                                    <th class="py-6 font-bold">Fecha</th>
+                                    <th class="py-6 font-bold">Contacto</th>
+                                    <th class="py-6 font-bold">Empresa</th>
+                                    <th class="py-6 font-bold">Proyecto</th>
+                                    <th class="py-6 font-bold text-right"
+                                        >Acción</th
+                                    >
+                                </tr>
+                            </thead>
+                            <tbody id="leads-body">
+                                <!-- Data injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Subscribers Content -->
+                <div id="subs-content" class="hidden space-y-8">
+                    <div class="max-w-2xl">
+                        <table class="w-full text-left font-body">
+                            <thead>
+                                <tr
+                                    class="border-b border-slate-100 text-[10px] uppercase tracking-widest text-slate-300"
+                                >
+                                    <th class="py-6 font-bold"
+                                        >Fecha Registro</th
+                                    >
+                                    <th class="py-6 font-bold"
+                                        >Email del Suscriptor</th
+                                    >
+                                </tr>
+                            </thead>
+                            <tbody id="subs-body">
+                                <!-- Data injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div
+                    id="empty-state"
+                    class="hidden py-48 text-center text-slate-200 font-body italic text-4xl font-light"
+                >
+                    Silencio absoluto. No hay registros.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Detalle -->
+    <div
+        id="detail-modal"
+        class="fixed inset-0 z-50 items-center justify-center bg-white/95 backdrop-blur-md hidden p-6"
+    >
+        <div class="w-full max-w-3xl p-12 space-y-12 animate-in relative">
+            <button
+                id="close-modal"
+                class="absolute top-0 right-0 text-slate-300 hover:text-slate-900 transition-colors"
+            >
+                <span class="material-icons-round text-4xl">close</span>
+            </button>
+            <div class="space-y-4">
+                <Text
+                    size="xs"
+                    class="uppercase tracking-[0.3em] text-brand-rose font-bold"
+                    >Expediente de Lead</Text
+                >
+                <Title id="modal-name" level={2} />
+            </div>
+
+            <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-12 py-12 border-y border-slate-100"
+            >
+                <div class="space-y-2">
+                    <Text
+                        size="xs"
+                        class="uppercase text-slate-300 font-bold tracking-widest"
+                        >Email</Text
+                    >
+                    <Text id="modal-email" size="xl" class="text-slate-900" />
+                </div>
+                <div class="space-y-2">
+                    <Text
+                        size="xs"
+                        class="uppercase text-slate-300 font-bold tracking-widest"
+                        >Plazo Estimado</Text
+                    >
+                    <Text
+                        id="modal-deadline"
+                        size="xl"
+                        class="text-slate-900"
+                    />
+                </div>
+                <div class="space-y-2">
+                    <Text
+                        size="xs"
+                        class="uppercase text-slate-300 font-bold tracking-widest"
+                        >Área de Interés</Text
+                    >
+                    <Text id="modal-area" size="xl" class="text-slate-900" />
+                </div>
+                <div class="space-y-2">
+                    <Text
+                        size="xs"
+                        class="uppercase text-slate-300 font-bold tracking-widest"
+                        >Presupuesto</Text
+                    >
+                    <Text
+                        id="modal-budget"
+                        size="xl"
+                        class="text-brand-rose font-medium"
+                    />
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <Text
+                    size="xs"
+                    class="uppercase text-slate-300 font-bold tracking-widest"
+                    >El Desafío</Text
+                >
+                <Text
+                    id="modal-problem"
+                    size="2xl"
+                    light
+                    class="italic text-slate-900 leading-tight"
+                />
+            </div>
+
+            <div class="space-y-6">
+                <Text
+                    size="xs"
+                    class="uppercase text-slate-300 font-bold tracking-widest"
+                    >Contexto Adicional</Text
+                >
+                <Text
+                    id="modal-desc"
+                    size="base"
+                    class="text-slate-500 leading-loose max-w-2xl"
+                />
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    interface Lead {
+        id: number;
+        email: string;
+        name: string;
+        company: string;
+        role: string;
+        problem: string;
+        description: string;
+        area: string;
+        deadline: string;
+        budget: string;
+        created_at: string;
+    }
+    interface Subscriber {
+        id: number;
+        email: string;
+        created_at: string;
+    }
+
+    const API_URL =
+        (import.meta as any).env.PUBLIC_API_URL || "http://localhost:8080";
+
+    // Selectors
+    const $ = (id: string) => document.getElementById(id);
+    const loginSection = $("login-section");
+    const dashboardSection = $("dashboard-section");
+    const loginError = $("login-error");
+    const tokenInput = $("admin-token") as HTMLInputElement;
+    const emailInput = $("admin-email") as HTMLInputElement;
+    const adminActions = $("admin-actions");
+    const leadsBody = $("leads-body");
+    const subsBody = $("subs-body");
+    const emptyState = $("empty-state");
+    const modal = $("detail-modal");
+
+    let allLeads: Lead[] = [];
+    let currentTab = "leads";
+
+    const formatDate = (dateStr: string) => {
+        const d = new Date(dateStr);
+        return d.toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
+    const fetchAllData = async () => {
+        const token = localStorage.getItem("admin_token");
+        const email = localStorage.getItem("admin_email");
+
+        console.log("Intentando conectar a:", API_URL);
+        console.log("Email:", email);
+        console.log("Token length:", token?.length);
+
+        if (!token || !email) return;
+
+        try {
+            // Test connection first
+            try {
+                const health = await fetch(`${API_URL}/api/health`);
+                console.log("Conexión básica OK:", await health.json());
+            } catch (e) {
+                console.error("No se pudo contactar al backend en:", API_URL);
+            }
+            const [leadsResp, subsResp] = await Promise.all([
+                fetch(`${API_URL}/api/admin/leads`, {
+                    headers: { "X-Admin-Token": token, "X-Admin-Email": email },
+                }),
+                fetch(`${API_URL}/api/admin/subscribers`, {
+                    headers: { "X-Admin-Token": token, "X-Admin-Email": email },
+                }),
+            ]);
+
+            if (leadsResp.status === 401) {
+                logout();
+                return;
+            }
+
+            allLeads = await leadsResp.json();
+            const subscribers = await subsResp.json();
+
+            renderLeads(allLeads);
+            renderSubscribers(subscribers);
+            showDashboard();
+            loginError?.classList.add("hidden");
+        } catch (err) {
+            console.error(err);
+            loginError?.classList.remove("hidden");
+        }
+    };
+
+    const renderLeads = (leads: Lead[]) => {
+        if (!leadsBody || !emptyState) return;
+        if (!leads || (leads.length === 0 && currentTab === "leads")) {
+            leadsBody.innerHTML = "";
+            emptyState.classList.remove("hidden");
+            return;
+        }
+        emptyState.classList.add("hidden");
+        leadsBody.innerHTML = leads
+            .map(
+                (l) => `
+            <tr class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
+                <td class="py-8 text-xs text-slate-300 font-mono">${formatDate(l.created_at)}</td>
+                <td class="py-8">
+                    <div class="font-medium text-slate-900">${l.name}</div>
+                    <div class="text-xs text-slate-400 font-light">${l.email}</div>
+                </td>
+                <td class="py-8">
+                    <div class="text-sm text-slate-500">${l.company || "-"}</div>
+                </td>
+                <td class="py-8">
+                    <div class="text-sm text-slate-900 font-medium">${l.area}</div>
+                </td>
+                <td class="py-8 text-right">
+                    <button class="view-detail text-slate-300 hover:text-slate-900 p-2 transition-all" data-id="${l.id}">
+                         <span class="material-icons-round">open_in_new</span>
+                    </button>
+                </td>
+            </tr>
+        `,
+            )
+            .join("");
+
+        document.querySelectorAll(".view-detail").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                const id = btn.getAttribute("data-id");
+                const lead = allLeads.find((x) => x.id.toString() === id);
+                if (lead) showModal(lead);
+            });
+        });
+    };
+
+    const renderSubscribers = (subs: Subscriber[]) => {
+        if (!subsBody) return;
+        if (!subs || subs.length === 0) {
+            subsBody.innerHTML = "";
+            return;
+        }
+        subsBody.innerHTML = subs
+            .map(
+                (s) => `
+            <tr class="border-b border-slate-50">
+                <td class="py-6 text-xs text-slate-300 font-mono">${formatDate(s.created_at)}</td>
+                <td class="py-6 text-slate-900 font-medium">${s.email}</td>
+            </tr>
+        `,
+            )
+            .join("");
+    };
+
+    const showModal = (lead: Lead) => {
+        if (!modal) return;
+        $("modal-name")!.innerText = lead.name;
+        $("modal-email")!.innerText = lead.email;
+        $("modal-deadline")!.innerText = lead.deadline;
+        $("modal-area")!.innerText = lead.area;
+        $("modal-budget")!.innerText = lead.budget;
+        $("modal-problem")!.innerText = lead.problem || "Sin respuesta";
+        $("modal-desc")!.innerText = lead.description || "Sin detalles";
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    };
+
+    const logout = () => {
+        localStorage.removeItem("admin_token");
+        localStorage.removeItem("admin_email");
+        loginSection?.classList.remove("hidden");
+        dashboardSection?.classList.add("hidden");
+        adminActions?.classList.add("hidden");
+        adminActions?.classList.remove("flex");
+    };
+
+    const showDashboard = () => {
+        loginSection?.classList.add("hidden");
+        dashboardSection?.classList.remove("hidden");
+        adminActions?.classList.remove("hidden");
+        adminActions?.classList.add("flex");
+    };
+
+    // Tabs
+    const switchTab = (tab: string) => {
+        currentTab = tab;
+        const leadsTab = $("tab-leads");
+        const subsTab = $("tab-subs");
+        const leadsContent = $("leads-content");
+        const subsContent = $("subs-content");
+
+        if (tab === "leads") {
+            leadsTab?.classList.add("bg-white", "shadow-sm", "text-slate-900");
+            leadsTab?.classList.remove("text-slate-400");
+            subsTab?.classList.remove(
+                "bg-white",
+                "shadow-sm",
+                "text-slate-900",
+            );
+            subsTab?.classList.add("text-slate-400");
+            leadsContent?.classList.remove("hidden");
+            subsContent?.classList.add("hidden");
+            renderLeads(allLeads);
+        } else {
+            subsTab?.classList.add("bg-white", "shadow-sm", "text-slate-900");
+            subsTab?.classList.remove("text-slate-400");
+            leadsTab?.classList.remove(
+                "bg-white",
+                "shadow-sm",
+                "text-slate-900",
+            );
+            leadsTab?.classList.add("text-slate-400");
+            subsContent?.classList.remove("hidden");
+            leadsContent?.classList.add("hidden");
+            emptyState?.classList.add("hidden");
+        }
+    };
+
+    // Listeners
+    $("login-btn")?.addEventListener("click", () => {
+        const t = tokenInput?.value;
+        const e = emailInput?.value;
+        if (t && e) {
+            localStorage.setItem("admin_token", t);
+            localStorage.setItem("admin_email", e);
+            fetchAllData();
+        }
+    });
+
+    $("logout-btn")?.addEventListener("click", logout);
+    $("tab-leads")?.addEventListener("click", () => switchTab("leads"));
+    $("tab-subs")?.addEventListener("click", () => switchTab("subs"));
+    $("close-modal")?.addEventListener("click", () => {
+        modal?.classList.add("hidden");
+        modal?.classList.remove("flex");
+    });
+
+    // Init
+    const savedToken = localStorage.getItem("admin_token");
+    const savedEmail = localStorage.getItem("admin_email");
+    if (savedToken && savedEmail) fetchAllData();
+    else logout();
+</script>
+
+<style>
+    .hidden {
+        display: none !important;
+    }
+    .animate-in {
+        animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes slide-up {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .highlight {
+        color: var(--color-brand-rose);
+    }
+</style>

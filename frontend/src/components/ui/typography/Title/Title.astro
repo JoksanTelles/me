@@ -2,9 +2,10 @@
 interface Props {
     level?: 1 | 2 | 3 | 4;
     class?: string;
+    id?: string;
 }
 
-const { level = 1, class: className = "" } = Astro.props;
+const { level = 1, class: className = "", id } = Astro.props;
 const Tag = `h${level}` as any;
 
 const styles = {
@@ -17,6 +18,9 @@ const styles = {
 const baseStyles = "transition-all duration-300 text-slate-950 font-heading";
 ---
 
-<Tag class:list={[baseStyles, styles[level as keyof typeof styles], className]}>
+<Tag
+    {id}
+    class:list={[baseStyles, styles[level as keyof typeof styles], className]}
+>
     <slot />
 </Tag>

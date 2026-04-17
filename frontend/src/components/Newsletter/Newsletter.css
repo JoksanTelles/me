@@ -1,16 +1,32 @@
 @reference "../../styles/global.css";
 
 .newsletter-container {
-    @apply py-24 border-t border-slate-50;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+    border-top: 1px solid var(--color-slate-50);
 }
 
 .newsletter-title {
-    @apply text-2xl font-heading mb-6;
+    font-size: 1.5rem;
+    font-family: var(--font-heading);
+    margin-bottom: 1.5rem;
 }
 
 .newsletter-input {
-    @apply flex-1 py-4 bg-transparent border-b border-slate-100 outline-none transition-all font-body;
-    @apply focus:border-slate-900;
+    flex: 1 1 0%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background-color: transparent;
+    border-bottom: 1px solid var(--color-slate-100);
+    outline: none;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    font-family: var(--font-body);
+}
+
+.newsletter-input:focus {
+    border-color: var(--color-slate-900);
 }
 
 .newsletter-button {

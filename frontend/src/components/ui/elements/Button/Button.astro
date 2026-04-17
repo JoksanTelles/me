@@ -3,9 +3,10 @@ interface Props {
     variant?: "primary" | "secondary";
     href?: string;
     class?: string;
+    id?: string;
 }
 
-const { variant = "primary", href, class: className = "" } = Astro.props;
+const { variant = "primary", href, class: className = "", id } = Astro.props;
 
 const Element = href ? "a" : "button";
 
@@ -21,6 +22,10 @@ const variants = {
 const sizes = "";
 ---
 
-<Element {href} class:list={[baseStyles, variants[variant], sizes, className]}>
+<Element
+    {href}
+    {id}
+    class:list={[baseStyles, variants[variant], sizes, className]}
+>
     <slot />
 </Element>
