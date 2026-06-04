@@ -1,0 +1,21 @@
+---
+import AdminLayout from '../../../../layouts/AdminLayout.astro';
+import { CourseBuilder } from '../../../../components/admin/CourseBuilder';
+import { pb } from '../../../../lib/pocketbase';
+
+export const prerender = false;
+const { slug } = Astro.params;
+
+let courseId = 'new';
+if (slug !== 'new') {
+  try {
+    const record = await pb.collection('courses').getFirstListItem(`slug="${slug}"`);
+    courseId = record.id;
+  } catch(e) {
+    return Astro.redirect('/admin/cursos');
+  }
+}
+---
+<AdminLayout title={slug === 'new' ? 'Nuevo Curso' : 'Editor de Curso'} activePath={`/admin/cursos/${slug}`}>
+  <CourseBuilder courseId={courseId} client:load />
+</AdminLayout>

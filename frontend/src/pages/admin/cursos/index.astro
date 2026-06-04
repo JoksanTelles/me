@@ -1,0 +1,9 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { CoursesTable } from '../../../components/admin/CoursesTable';
+
+export const prerender = false;
+---
+<AdminLayout title="Cursos" activePath="/admin/cursos">
+  <CoursesTable client:load />
+</AdminLayout>

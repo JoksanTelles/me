@@ -1,0 +1,61 @@
+---
+import '../../styles/global.css';
+import { pb } from '../../lib/pocketbase';
+
+const { slug } = Astro.params;
+
+let courseRecord;
+try {
+  courseRecord = await pb.collection('courses').getFirstListItem(`slug="${slug}"`);
+} catch (e) {
+  return Astro.redirect('/404');
+}
+
+const course = {
+  id: courseRecord.id,
+  title: courseRecord.title,
+  description: courseRecord.description,
+  price: courseRecord.price,
+  features: ['Acceso de por vida', 'Certificado de finalización', 'Ejercicios prácticos']
+};
+---
+
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>{course.title} | Joksan</title>
+</head>
+<body class="min-h-screen bg-stone-100 font-sans text-stone-900 antialiased flex flex-col items-center py-12 px-4">
+  <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-stone-100">
+    
+    <div>
+      <a href="/courses" class="text-stone-500 hover:text-rose-600 mb-6 inline-block font-medium text-sm">← Ver todos los cursos</a>
+      <div class="aspect-video bg-stone-200 rounded-2xl mb-6 flex items-center justify-center text-stone-400 text-sm">Video Promocional</div>
+    </div>
+
+    <div class="flex flex-col justify-center">
+      <h1 class="font-title text-4xl text-rose-950 uppercase mb-4">{course.title}</h1>
+      <p class="text-stone-600 mb-6 leading-relaxed">{course.description}</p>
+      
+      <ul class="mb-8 space-y-2">
+        {course.features.map(feat => (
+          <li class="flex items-center gap-2 text-stone-700 text-sm">
+            <span class="text-rose-500">✓</span> {feat}
+          </li>
+        ))}
+      </ul>
+
+      <div class="flex items-center gap-6 mt-auto">
+        <span class="font-title text-4xl text-stone-900">${course.price}</span>
+        <form method="POST" action="/cart" class="flex-1">
+          <input type="hidden" name="course_id" value={course.id} />
+          <button type="submit" class="w-full text-center bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-6 rounded-xl shadow-md transition-all uppercase tracking-wide">
+            Agregar al Carrito
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { DashboardStats } from '../../../components/admin/DashboardStats';
+---
+<AdminLayout title="Dashboard" activePath="/admin/dashboard">
+  <DashboardStats client:load />
+</AdminLayout>

@@ -1,252 +1,72 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import CtaForm from "../components/CtaForm/CtaForm.astro";
-import Title from "../components/ui/typography/Title/Title.astro";
-import Hero from "../sections/Hero/Hero.astro";
-import Badge from "../components/ui/elements/Badge/Badge.astro";
-import Button from "../components/ui/elements/Button/Button.astro";
-import Text from "../components/ui/typography/Text/Text.astro";
+import '../styles/global.css';
+import { pb } from '../lib/pocketbase';
 
-const siteName = import.meta.env.PUBLIC_SITE_NAME || "Joksan Telles";
+const records = await pb.collection('courses').getList(1, 3, { filter: 'status = "published"' });
+const totalCourses = records.totalItems;
+const courses = records.items.slice(0, 2);
 ---
 
-<Layout title={`${siteName} — Design & Development`}>
-    <!-- HERO -->
-    <Hero>
-        <Fragment slot="content">
-            <div class="space-y-4">
-                <Badge> Product Designer & Developer </Badge>
-                <Title>
-                    Joksan <span class="highlight">Télles</span>
-                </Title>
-            </div>
-            <Text
-                size="2xl"
-                light
-                class="max-w-3xl leading-[1.1] text-slate-400"
-            >
-                Diseño sistemas que hacen <span
-                    class="text-slate-900 font-normal">obvio lo complejo.</span
-                >
-                <span class="text-brand-yellow font-normal">.</span>
-            </Text>
-        </Fragment>
-        <Fragment slot="buttons">
-            <Button href="#contacto" variant="primary"> Contáctame </Button>
-            <Button href="#principios" variant="secondary">
-                Explorar trabajo →
-            </Button>
-        </Fragment>
-    </Hero>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="generator" content={Astro.generator} />
+  <title>Joksan | Cursos de Desarrollo y Diseño</title>
+</head>
+<body class="min-h-screen bg-stone-100 font-sans text-stone-900 antialiased flex flex-col items-center py-16 px-4">
+  
+  <div class="max-w-md w-full flex flex-col items-center gap-8">
+    
+    <!-- Profile Section -->
+    <div class="flex flex-col items-center text-center gap-4">
+      <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-rose-500 shadow-xl bg-stone-300">
+        <!-- Placeholder for Avatar -->
+        <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Joksan" alt="Joksan" class="w-full h-full object-cover" />
+      </div>
+      <div>
+        <h1 class="font-title tracking-wide text-rose-950 text-4xl uppercase mt-2">Joksan</h1>
+        <p class="text-stone-600 font-medium text-lg mt-1">Ingeniero de Software & Diseñador Web</p>
+      </div>
+    </div>
 
-    <!-- BELIEFS -->
-    <section id="principios" class="py-48 px-6 bg-slate-50">
-        <div class="max-w-7xl mx-auto">
-            <h2
-                class="text-5xl md:text-7xl mb-32 font-light tracking-tight text-slate-900"
-            >
-                Principios <span class="highlight italic">fundamentales</span>
-            </h2>
+    <!-- Bio / Description -->
+    <p class="text-center text-stone-700 leading-relaxed">
+      Aprende a crear experiencias digitales increíbles. Desde el diseño visual hasta la lógica del código, te guío paso a paso.
+    </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-24 md:gap-32">
-                {
-                    [
-                        {
-                            title: "Claridad",
-                            descriptor: "Eliminar fricción.",
-                            desc: "Cada decisión visual o funcional debe servir al usuario para lograr su objetivo con el mínimo esfuerzo.",
-                        },
-                        {
-                            title: "Automatización",
-                            descriptor: "Sistemas eficientes.",
-                            desc: "Un sistema interno bien diseñado da control real de procesos, datos y resultados.",
-                        },
-                        {
-                            title: "Seguridad",
-                            descriptor: "Respeto al usuario.",
-                            desc: "La confianza se gana con transparencia y protección absoluta de la información.",
-                        },
-                    ].map((belief, i) => (
-                        <div class="space-y-8">
-                            <p class="text-[10px] uppercase tracking-[0.4em] text-slate-300 font-bold">
-                                0{i + 1} // {belief.descriptor}
-                            </p>
-                            <h3 class="text-4xl font-medium text-slate-900 underline decoration-slate-200 underline-offset-8">
-                                {belief.title}
-                            </h3>
-                            <Text size="xl" light class="leading-relaxed">
-                                {belief.desc}
-                            </Text>
-                        </div>
-                    ))
-                }
-            </div>
-        </div>
-    </section>
+    <!-- Links / Products -->
+    <div class="w-full flex flex-col gap-4">
+      
+      {courses.map(course => (
+        <a href={`/courses/${course.slug}`} class="group relative block w-full bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border-2 border-transparent hover:border-rose-400 overflow-hidden text-center transform hover:-translate-y-1">
+          <div class="absolute inset-0 bg-rose-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="relative z-10 flex flex-col items-center gap-2">
+            <span class="text-3xl mb-1">🎓</span>
+            <h2 class="font-title tracking-wide text-rose-950 text-2xl uppercase">{course.title}</h2>
+            <p class="text-stone-500 text-sm">{course.description}</p>
+            <span class="mt-2 inline-block bg-rose-100 text-rose-700 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">Ver Curso</span>
+          </div>
+        </a>
+      ))}
 
-    <!-- SOLUTIONS -->
-    <section class="py-48 px-6 bg-slate-100/50">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-32">
-                <div class="space-y-12">
-                    <h2
-                        class="text-6xl md:text-8xl font-light tracking-tighter leading-none"
-                    >
-                        Soluciones <br />
-                        <span class="italic font-normal">Digitales</span>
-                    </h2>
-                    <Text
-                        size="2xl"
-                        light
-                        class="max-w-md italic border-l-4 border-slate-200 pl-8"
-                    >
-                        Optimizando la intersección entre diseño, datos y
-                        procesos operativos.
-                    </Text>
-                </div>
+      {totalCourses > 2 && (
+        <a href="/courses" class="text-center mt-2 text-stone-500 hover:text-rose-600 font-medium border border-stone-300 rounded-xl py-3 hover:border-rose-400 transition-colors">
+          Ver todos los cursos →
+        </a>
+      )}
 
-                <div class="space-y-32">
-                    <div class="space-y-12">
-                        <h3 class="text-4xl font-medium text-slate-900">
-                            Integración & Sincronización
-                        </h3>
-                        <ul class="space-y-8">
-                            {
-                                [
-                                    "CRM, ERP & E-commerce",
-                                    "Ecosistemas de APIs",
-                                    "Datos en tiempo real",
-                                ].map((item) => (
-                                    <li class="text-2xl text-slate-400 font-light flex items-center gap-6 group hover:text-slate-900 transition-colors">
-                                        <span class="w-12 h-px bg-slate-300 group-hover:bg-brand-rose transition-colors" />
-                                        {item}
-                                    </li>
-                                ))
-                            }
-                        </ul>
-                    </div>
+    </div>
 
-                    <div class="space-y-12">
-                        <h3 class="text-4xl font-medium text-slate-900">
-                            Automatización Operativa
-                        </h3>
-                        <ul class="space-y-8">
-                            {
-                                [
-                                    "Gestión inteligente de leads",
-                                    "Workflows asíncronos",
-                                    "Fidelización automática",
-                                ].map((item) => (
-                                    <li class="text-2xl text-slate-400 font-light flex items-center gap-6 group hover:text-slate-900 transition-colors">
-                                        <span class="w-12 h-px bg-slate-300 group-hover:bg-brand-rose transition-colors" />
-                                        {item}
-                                    </li>
-                                ))
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Login Link -->
+    <div class="mt-8">
+      <a href="/login" class="text-stone-400 hover:text-rose-500 transition-colors font-medium text-sm">
+        ¿Ya tienes cuenta? Iniciar Sesión
+      </a>
+    </div>
 
-    <!-- STACK / TOOLS -->
-    <section class="py-48 px-6 bg-[#020617] text-white">
-        <div
-            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16"
-        >
-            <h2
-                class="text-xl uppercase tracking-[0.5em] text-slate-700 font-bold min-w-[200px]"
-            >
-                TOOLKIT
-            </h2>
-            <div class="flex flex-wrap gap-x-12 gap-y-12">
-                {
-                    [
-                        "Figma",
-                        "HTML5",
-                        "Astro",
-                        "Python",
-                        "FastAPI",
-                        "n8n",
-                        "Docker",
-                        "Vue",
-                    ].map((tool) => (
-                        <div class="group cursor-default">
-                            <span class="text-2xl md:text-4xl font-light text-slate-600 group-hover:text-brand-rose transition-all duration-500 italic block">
-                                {tool}
-                            </span>
-                        </div>
-                    ))
-                }
-            </div>
-        </div>
-    </section>
+  </div>
 
-    <!-- CONTACT FORM SECTION -->
-    <section id="contacto" class="py-48 px-6 bg-slate-50">
-        <div class="max-w-4xl mx-auto space-y-24">
-            <div class="text-center space-y-8">
-                <h2
-                    class="text-7xl md:text-9xl font-semibold tracking-tighter leading-none"
-                >
-                    Hablemos <span class="highlight">.</span>
-                </h2>
-                <Text size="2xl" light class="opacity-60">
-                    Propuestas, colaboraciones o consultas técnicas.
-                </Text>
-            </div>
-
-            <div class="pt-12">
-                <div class="bg-white p-12 shadow-sm border border-slate-100">
-                    <CtaForm />
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer
-        class="py-24 px-6 border-t border-slate-50 text-slate-400 text-xs tracking-widest uppercase"
-    >
-        <div
-            class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12"
-        >
-            <div class="font-bold">
-                © {new Date().getFullYear()}
-                {siteName}
-            </div>
-            <div class="flex gap-12 font-medium">
-                <a href="#" class="hover:text-brand-rose transition-colors"
-                    >LinkedIn</a
-                >
-                <a href="#" class="hover:text-brand-rose transition-colors"
-                    >GitHub</a
-                >
-                <a href="#" class="hover:text-brand-rose transition-colors"
-                    >Dribbble</a
-                >
-            </div>
-        </div>
-    </footer>
-</Layout>
-
-<style is:global>
-    @reference "../styles/global.css";
-
-    /* Absolute legibility and clean spacing */
-    .highlight {
-        color: var(--color-brand-rose);
-    }
-
-    section {
-        outline: 2px solid transparent;
-        outline-offset: 2px;
-        transition-property: none;
-    }
-
-    ::selection {
-        background-color: var(--color-rose-50);
-        color: var(--color-brand-rose);
-    }
-</style>
+</body>
+</html>

@@ -1,33 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 @import "tailwindcss";
-@import "./theme.css";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/readex-pro";
+@import "@fontsource-variable/space-grotesk";
 
-@utility font-heading {
-    font-family: var(--font-heading);
+@custom-variant dark (&:is(.dark *));
+
+/* La directiva @theme es de Tailwind v4. Si tu IDE muestra un warning de "Unknown at rule", es normal y completamente funcional. */
+@theme {
+  --font-sans: "Readex Pro Variable", sans-serif;
+  --font-title: "Impact", "Arial Black", sans-serif;
 }
 
-@utility font-body {
-    font-family: var(--font-body);
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24;
 }
 
-body {
-    @apply transition-none; /* No transitions needed for single state */
+/* Estilos Globales para el contenido de Tiptap */
+.tiptap-styled-content {
+  color: #3f3f46;
+  font-family: var(--font-sans), sans-serif;
+  line-height: 1.75;
 }
 
-/* Base Headings */
-h1 { @apply text-6xl md:text-8xl lg:text-9xl font-semibold; }
-h2 { @apply text-4xl md:text-6xl font-medium; }
-h3 { @apply text-2xl md:text-3xl font-medium; }
-
-/* Global Utilities */
-.highlight {
-    color: var(--color-brand-rose);
+.tiptap-styled-content h1,
+.tiptap-styled-content h2,
+.tiptap-styled-content h3,
+.tiptap-styled-content h4 {
+  color: #1c1917;
+  font-family: var(--font-title), sans-serif;
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
 }
 
-.text-subtle {
-    color: var(--color-slate-400);
-    @apply font-light;
+.tiptap-styled-content h1 { font-size: 2.25rem; }
+.tiptap-styled-content h2 { font-size: 1.875rem; }
+.tiptap-styled-content h3 { font-size: 1.5rem; }
+.tiptap-styled-content h4 { font-size: 1.25rem; }
+
+.tiptap-styled-content p {
+  margin-bottom: 1.25em;
 }
 
-@utility perspective-1000 {
-    perspective: 1000px;
+.tiptap-styled-content a {
+  color: #f43f5e;
+  text-decoration: underline;
+  text-decoration-color: #fca5a5;
+  text-underline-offset: 4px;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.tiptap-styled-content a:hover {
+  color: #e11d48;
+  text-decoration-color: #e11d48;
+}
+
+.tiptap-styled-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25em;
+}
+
+.tiptap-styled-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1.25em;
+}
+
+.tiptap-styled-content li {
+  margin-bottom: 0.5em;
+}
+
+.tiptap-styled-content code {
+  background-color: #f5f5f4;
+  color: #d946ef;
+  font-family: monospace;
+  font-size: 0.875em;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-weight: 600;
+}
+
+.tiptap-styled-content pre {
+  background: #2d2d2d;
+  color: #ccc;
+  font-family: monospace;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  overflow-x: auto;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.tiptap-styled-content pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.85rem;
+  font-weight: normal;
+}
+
+.tiptap-styled-content blockquote {
+  border-left: 4px solid #f43f5e;
+  background-color: #fff1f2;
+  padding: 1rem 1.5rem;
+  margin: 1.5em 0;
+  color: #881337;
+  font-style: italic;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.tiptap-styled-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  margin: 1.5em auto;
+  display: block;
+}
+
+.tiptap-styled-content iframe {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 0.5rem;
+  margin: 1.5em 0;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+/* lowlight highlight.js github-dark style */
+.hljs-comment, .hljs-quote { color: #8b949e; font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-subst { color: #ff7b72; font-weight: bold; }
+.hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable, .hljs-tag .hljs-attr { color: #79c0ff; }
+.hljs-string, .hljs-doctag { color: #a5d6ff; }
+.hljs-title, .hljs-section, .hljs-selector-id { color: #d2a8ff; font-weight: bold; }
+.hljs-type, .hljs-class .hljs-title { color: #ffa657; font-weight: bold; }
+.hljs-tag, .hljs-name, .hljs-attribute { color: #7ee787; font-weight: normal; }
+.hljs-regexp, .hljs-link { color: #a5d6ff; }
+.hljs-symbol, .hljs-bullet { color: #f2cc60; }
+.hljs-built_in, .hljs-builtin-name { color: #79c0ff; }
+.hljs-meta { color: #8b949e; font-weight: bold; }
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #a8a29e;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.153 0.006 107.1);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.153 0.006 107.1);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.153 0.006 107.1);
+  --primary: oklch(0.514 0.222 16.935);
+  --primary-foreground: oklch(0.969 0.015 12.422);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.966 0.005 106.5);
+  --muted-foreground: oklch(0.58 0.031 107.3);
+  --accent: oklch(0.966 0.005 106.5);
+  --accent-foreground: oklch(0.228 0.013 107.4);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.93 0.007 106.5);
+  --input: oklch(0.93 0.007 106.5);
+  --ring: oklch(0.737 0.021 106.9);
+  --chart-1: oklch(0.81 0.117 11.638);
+  --chart-2: oklch(0.645 0.246 16.439);
+  --chart-3: oklch(0.586 0.253 17.585);
+  --chart-4: oklch(0.514 0.222 16.935);
+  --chart-5: oklch(0.455 0.188 13.697);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.988 0.003 106.5);
+  --sidebar-foreground: oklch(0.153 0.006 107.1);
+  --sidebar-primary: oklch(0.586 0.253 17.585);
+  --sidebar-primary-foreground: oklch(0.969 0.015 12.422);
+  --sidebar-accent: oklch(0.966 0.005 106.5);
+  --sidebar-accent-foreground: oklch(0.228 0.013 107.4);
+  --sidebar-border: oklch(0.93 0.007 106.5);
+  --sidebar-ring: oklch(0.737 0.021 106.9);
+}
+
+.dark {
+  --background: oklch(0.153 0.006 107.1);
+  --foreground: oklch(0.988 0.003 106.5);
+  --card: oklch(0.228 0.013 107.4);
+  --card-foreground: oklch(0.988 0.003 106.5);
+  --popover: oklch(0.228 0.013 107.4);
+  --popover-foreground: oklch(0.988 0.003 106.5);
+  --primary: oklch(0.455 0.188 13.697);
+  --primary-foreground: oklch(0.969 0.015 12.422);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.286 0.016 107.4);
+  --muted-foreground: oklch(0.737 0.021 106.9);
+  --accent: oklch(0.286 0.016 107.4);
+  --accent-foreground: oklch(0.988 0.003 106.5);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.58 0.031 107.3);
+  --chart-1: oklch(0.81 0.117 11.638);
+  --chart-2: oklch(0.645 0.246 16.439);
+  --chart-3: oklch(0.586 0.253 17.585);
+  --chart-4: oklch(0.514 0.222 16.935);
+  --chart-5: oklch(0.455 0.188 13.697);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.988 0.003 106.5);
+  --sidebar-primary: oklch(0.645 0.246 16.439);
+  --sidebar-primary-foreground: oklch(0.969 0.015 12.422);
+  --sidebar-accent: oklch(0.286 0.016 107.4);
+  --sidebar-accent-foreground: oklch(0.988 0.003 106.5);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.58 0.031 107.3);
+}
+
+@theme inline {
+  --font-sans: 'Readex Pro Variable', sans-serif;
+  --font-heading: 'Space Grotesk Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

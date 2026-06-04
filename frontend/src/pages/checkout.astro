@@ -1,0 +1,179 @@
+---
+import '../styles/global.css';
+import { pb } from '../lib/pocketbase';
+import Stripe from 'stripe';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+
+if (!pb.authStore.isValid) {
+  return Astro.redirect('/login');
+}
+
+const user = pb.authStore.record;
+if (!user) {
+  return Astro.redirect('/login');
+}
+const courseId = Astro.cookies.get('cart_course_id')?.value;
+if (!courseId) return Astro.redirect('/courses');
+
+let course = null;
+try {
+  course = await pb.collection('courses').getOne(courseId);
+} catch (e) {
+  return Astro.redirect('/courses');
+}
+
+if (course.price === 0 && Astro.request.method === 'POST') {
+  try {
+    const existing = await pb.collection('purchases').getList(1, 1, {
+      filter: `course_id="${course.id}" && user_id="${user.id}"`
+    });
+    if (existing.totalItems === 0) {
+      let expires_at = "";
+      if (course.access_days > 0) {
+         const date = new Date();
+         date.setDate(date.getDate() + course.access_days);
+         expires_at = date.toISOString();
+      }
+
+      await pb.collection('purchases').create({
+        user_id: user.id,
+        course_id: course.id,
+        amount: 0,
+        status: 'completed',
+        stripe_payment_intent_id: 'free_' + Date.now(),
+        expires_at: expires_at
+      });
+    }
+    Astro.cookies.delete('cart_course_id', { path: '/' });
+    return Astro.redirect('/success?free=true');
+  } catch (e) {
+    console.error("Error procesando curso gratis:", e);
+  }
+}
+
+// Inicializar Stripe
+const stripeKey = import.meta.env.STRIPE_SECRET_KEY;
+const publicKey = import.meta.env.PUBLIC_STRIPE_KEY;
+let clientSecret = '';
+let stripeError = '';
+
+if (!stripeKey) {
+  stripeError = "Falta STRIPE_SECRET_KEY en el entorno. Si acabas de editar tu archivo .env, REINICIA la terminal donde corre Astro (npm run dev).";
+} else if (course.price > 0) {
+  const stripe = new Stripe(stripeKey, {
+    apiVersion: '2026-05-27.dahlia',
+  });
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(course.price * 100),
+      currency: 'mxn',
+      payment_method_types: ['card'],
+      metadata: {
+        course_id: course.id,
+        user_id: user.id
+      }
+    });
+    clientSecret = paymentIntent.client_secret || '';
+  } catch (e: any) {
+    console.error("Error creando PaymentIntent:", e);
+    stripeError = e.message || "Error desconocido en Stripe";
+  }
+}
+---
+
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Checkout | Joksan</title>
+  <script is:inline src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="min-h-screen bg-stone-100 font-sans text-stone-900 antialiased flex flex-col items-center py-12 px-4">
+  <div class="max-w-md w-full bg-white rounded-3xl p-8 shadow-md border border-stone-100">
+    <a href="/cart" class="text-stone-400 hover:text-stone-600 mb-4 block text-sm">← Volver al carrito</a>
+    <h1 class="font-title text-3xl text-rose-950 uppercase mb-2">Finalizar Compra</h1>
+    <p class="text-stone-500 text-sm mb-8">Estás comprando <strong>{course.title}</strong> por ${course.price}.</p>
+
+    {course.price === 0 ? (
+      <form method="POST" class="space-y-6">
+        <button type="submit" class="block w-full text-center bg-stone-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide">
+          Inscribirse Gratis
+        </button>
+      </form>
+    ) : !clientSecret ? (
+      <div class="bg-red-100 text-red-700 p-4 rounded-xl mb-6 text-sm">
+        <p class="font-bold">Error del sistema de pagos:</p>
+        <p class="mt-2 font-mono text-xs">{stripeError}</p>
+      </div>
+    ) : (
+      <form id="payment-form" class="space-y-6">
+        <div id="payment-element" class="bg-white rounded-xl">
+          <!-- Elements se montará aquí -->
+        </div>
+        
+        <div id="error-message" class="text-red-600 text-sm hidden bg-red-50 p-3 rounded-lg border border-red-100"></div>
+        
+        <button id="submit" class="block w-full text-center bg-stone-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed">
+          <span id="button-text">Pagar ${course.price}</span>
+          <span id="spinner" class="hidden">Procesando...</span>
+        </button>
+      </form>
+    )}
+  </div>
+
+  {clientSecret && (
+    <script define:vars={{ clientSecret, publicKey }}>
+      if (!publicKey) {
+        console.error("CRITICAL: PUBLIC_STRIPE_KEY is missing!");
+      }
+
+      if (typeof Stripe === 'undefined') {
+        const errorMsg = document.getElementById('error-message');
+        errorMsg.textContent = "Error interno: El script de Stripe no se pudo cargar. Revisa tu conexión o desactiva bloqueadores extremos.";
+        errorMsg.classList.remove('hidden');
+        document.getElementById('submit').disabled = true;
+      } else {
+        // Desactivamos advancedFraudSignals para evitar que Firefox/AdBlockers bloqueen el iframe de telemetría de Stripe
+        const stripe = Stripe(publicKey, { advancedFraudSignals: false });
+        const elements = stripe.elements({ clientSecret });
+        
+        const paymentElement = elements.create('payment', {
+          layout: 'tabs',
+        });
+        paymentElement.mount('#payment-element');
+
+        const form = document.getElementById('payment-form');
+        const submitBtn = document.getElementById('submit');
+        const errorMsg = document.getElementById('error-message');
+        const btnText = document.getElementById('button-text');
+        const spinner = document.getElementById('spinner');
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          
+          submitBtn.disabled = true;
+          btnText.classList.add('hidden');
+          spinner.classList.remove('hidden');
+          errorMsg.classList.add('hidden');
+
+          const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+              return_url: window.location.origin + '/success',
+            }
+          });
+
+          if (error) {
+            errorMsg.textContent = error.message;
+            errorMsg.classList.remove('hidden');
+            submitBtn.disabled = false;
+            btnText.classList.remove('hidden');
+            spinner.classList.add('hidden');
+          }
+        });
+      }
+    </script>
+  )}
+</body>
+</html>

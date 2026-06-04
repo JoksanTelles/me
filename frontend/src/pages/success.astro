@@ -1,0 +1,108 @@
+---
+import '../styles/global.css';
+import { pb } from '../lib/pocketbase';
+import Stripe from 'stripe';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+
+if (!pb.authStore.isValid) {
+  return Astro.redirect('/login');
+}
+
+const user = pb.authStore.record;
+if (!user) {
+  return Astro.redirect('/login');
+}
+const paymentIntentId = Astro.url.searchParams.get('payment_intent');
+const redirectStatus = Astro.url.searchParams.get('redirect_status');
+
+let errorMsg = '';
+let success = false;
+let courseId = null;
+
+const isFree = Astro.url.searchParams.get('free');
+
+if (isFree === 'true') {
+  success = true;
+} else if (paymentIntentId && redirectStatus === 'succeeded') {
+  try {
+    const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2026-05-27.dahlia',
+    });
+    
+    // Verificar con Stripe que el pago realmente fue exitoso (por seguridad)
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+    
+    if (paymentIntent.status === 'succeeded') {
+      courseId = paymentIntent.metadata.course_id;
+      const amount = paymentIntent.amount / 100;
+      
+      // Limpiar carrito
+      Astro.cookies.delete('cart_course_id', { path: '/' });
+
+      // Check if already registered by webhook to avoid duplicate
+      const existing = await pb.collection('purchases').getList(1, 1, {
+        filter: `stripe_payment_intent_id="${paymentIntent.id}"`
+      });
+
+      if (existing.totalItems === 0) {
+        await pb.collection('purchases').create({
+          user_id: user.id,
+          course_id: courseId,
+          amount: amount,
+          status: 'completed',
+          stripe_payment_intent_id: paymentIntent.id
+        });
+      }
+      success = true;
+    } else {
+      errorMsg = 'El pago no ha sido completado. Estado: ' + paymentIntent.status;
+    }
+  } catch (e: any) {
+    errorMsg = 'Error verificando el pago: ' + e.message;
+  }
+} else if (redirectStatus === 'failed') {
+  errorMsg = 'El pago ha fallado. Por favor, intenta de nuevo.';
+} else {
+  // Sin query params, o status distinto
+  errorMsg = 'No se encontró información del pago.';
+}
+---
+
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Estado de Pago | Joksan</title>
+</head>
+<body class="min-h-screen bg-stone-100 font-sans text-stone-900 antialiased flex flex-col items-center justify-center py-12 px-4 text-center">
+  <div class="max-w-md w-full bg-white rounded-3xl p-10 shadow-xl border border-stone-100">
+    {success ? (
+      <>
+        <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+          ✓
+        </div>
+        <h1 class="font-title text-3xl text-rose-950 uppercase mb-4">¡Pago Exitoso!</h1>
+        <p class="text-stone-600 mb-8 leading-relaxed">
+          Tu compra se ha procesado correctamente. Ya tienes acceso al curso.
+        </p>
+        <a href="/dashboard" class="block w-full text-center bg-stone-900 hover:bg-black text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide">
+          Ir a mis cursos
+        </a>
+      </>
+    ) : (
+      <>
+        <div class="w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+          ✕
+        </div>
+        <h1 class="font-title text-3xl text-rose-950 uppercase mb-4">Error en el Pago</h1>
+        <p class="text-stone-600 mb-8 leading-relaxed">
+          {errorMsg}
+        </p>
+        <a href="/cart" class="block w-full text-center bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide">
+          Volver al carrito
+        </a>
+      </>
+    )}
+  </div>
+</body>
+</html>

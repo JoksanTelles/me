@@ -1,9 +1,0 @@
-@reference "../../styles/global.css";
-
-.theme-toggle-btn {
-    @apply fixed bottom-8 right-8 z-50 p-2 text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all;
-}
-
-.hidden {
-    display: none !important;
-}

@@ -1,0 +1,22 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import AdminForm from '../../../components/admin/AdminForm.vue';
+import { pb } from '../../../lib/pocketbase';
+
+export const prerender = false;
+let { username } = Astro.params;
+
+// Strip @ if present
+let lookupUsername = username;
+if (lookupUsername?.startsWith('@')) {
+  lookupUsername = lookupUsername.slice(1);
+}
+
+if (lookupUsername !== 'new') {
+  try { await pb.collection('users').getFirstListItem(`username="${lookupUsername}"`); } 
+  catch(e) { return Astro.redirect('/admin/usuarios'); }
+}
+---
+<AdminLayout title={lookupUsername === 'new' ? 'Nuevo Usuario' : `Editar Usuario ${lookupUsername}`} activePath="/admin/usuarios">
+  <AdminForm collectionId="users" recordId={lookupUsername as string} baseRoute="/admin/usuarios" recordLookupField="username" client:only="vue" />
+</AdminLayout>

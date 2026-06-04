@@ -1,0 +1,7 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { DataTable } from '../../../components/admin/DataTable';
+---
+<AdminLayout title="Usuarios" activePath="/admin/usuarios">
+  <DataTable collectionId="users" baseRoute="/admin/usuarios" editUrlParam="username" client:load />
+</AdminLayout>
