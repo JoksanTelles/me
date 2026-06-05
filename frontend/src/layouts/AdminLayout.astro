@@ -4,8 +4,12 @@ import '../styles/global.css';
 import { AdminLayout as ReactAdminLayout } from '../components/admin/AdminLayout';
 
 pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
-
 const user = pb.authStore.record || (pb.authStore as any).admin;
+
+// Validar que exista el usuario y que NO tenga collectionName (los admins en v0.22 no tienen collectionName, los estudiantes sí)
+if (!user || user.collectionName) {
+  return Astro.redirect('/admin/login');
+}
 
 interface Props {
   title: string;
@@ -20,7 +24,7 @@ const { title, activePath } = Astro.props;
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width" />
 </head>
-<body class="font-sans antialiased text-stone-900 bg-stone-50 overflow-hidden">
+<body class="font-sans antialiased text-stone-900 bg-stone-50 min-h-screen">
   <ReactAdminLayout client:load title={title} activePath={activePath}>
     <slot />
   </ReactAdminLayout>

@@ -82,3 +82,18 @@ async function run() {
 
 }
 run();
+
+  // Create student_tasks collection
+  try {
+    await pb.collections.create({
+      name: 'student_tasks',
+      type: 'base',
+      schema: [
+        { name: 'user_id', type: 'relation', required: true, id: 'stus1234', options: { collectionId: (await pb.collections.getOne('users')).id, cascadeDelete: true, maxSelect: 1 } },
+        { name: 'task_id', type: 'relation', required: true, id: 'stts1234', options: { collectionId: (await pb.collections.getOne('tasks')).id, cascadeDelete: true, maxSelect: 1 } },
+        { name: 'content', type: 'text', required: false, id: 'stco1234' },
+        { name: 'status', type: 'select', required: true, id: 'stst1234', options: { values: ['draft', 'submitted', 'graded'], maxSelect: 1 } }
+      ]
+    });
+    console.log('student_tasks created');
+  } catch(e) { console.error('student_tasks might exist', e?.response?.data || e.message); }

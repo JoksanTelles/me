@@ -1,0 +1,260 @@
+---
+import '../styles/global.css';
+import { pb } from '../lib/pocketbase';
+import UserLayout from '../layouts/UserLayout.astro';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+
+if (!pb.authStore.isValid) {
+  return Astro.redirect('/login');
+}
+
+const user = pb.authStore.record;
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+let successMessage = '';
+let errorMessage = '';
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  const collectionName = user.collectionName || 'users';
+  
+  try {
+    if (action === 'update_profile') {
+      // Remover action para no enviarlo a PocketBase
+      formData.delete('action');
+      
+      // Si no se subió un archivo válido, lo removemos para que no intente vaciar el avatar
+      const avatarFile = formData.get('avatar');
+      if (!avatarFile || (avatarFile as File).size === 0) {
+        formData.delete('avatar');
+      }
+
+      await pb.collection(collectionName).update(user.id, formData);
+      successMessage = 'Perfil actualizado correctamente.';
+      
+    } else if (action === 'update_password') {
+      const oldPassword = formData.get('oldPassword');
+      const password = formData.get('password');
+      const passwordConfirm = formData.get('passwordConfirm');
+      
+      if (password !== passwordConfirm) {
+        throw new Error("Las contraseñas nuevas no coinciden.");
+      }
+      
+      await pb.collection(collectionName).update(user.id, {
+        oldPassword,
+        password,
+        passwordConfirm
+      });
+      
+      successMessage = 'Contraseña actualizada correctamente.';
+    }
+    
+    // Refresh auth store to get updated info
+    const updatedUser = await pb.collection(collectionName).getOne(user.id);
+    pb.authStore.save(pb.authStore.token, updatedUser);
+    
+    // Update cookie
+    Astro.cookies.set('pb_auth', pb.authStore.exportToCookie(), { path: '/' });
+    
+  } catch(e: any) {
+    console.error("Error updating user:", e);
+    errorMessage = e.message || 'Error al actualizar. Verifica tus datos o intenta nuevamente.';
+  }
+}
+
+// Get latest user info
+const currentUser = pb.authStore.record;
+---
+
+<UserLayout title="Configuraciones" user={currentUser}>
+  <main class="max-w-4xl mx-auto py-12 px-4 relative z-10 w-full flex-1">
+    <div class="mb-8">
+      <a href="/" class="text-stone-400 hover:text-rose-600 mb-4 inline-block font-medium text-sm">← Volver al inicio</a>
+      <h1 class="font-title text-4xl text-rose-950 uppercase">Configuraciones</h1>
+      <p class="text-stone-500 mt-2">Administra tu perfil y preferencias de cuenta.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- Sidebar Settings Nav -->
+      <div class="col-span-1">
+        <div class="bg-white rounded-3xl shadow-sm border border-stone-200 overflow-hidden">
+          <ul class="divide-y divide-stone-100">
+            <li>
+              <a href="#perfil" class="block px-6 py-4 font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 transition-colors">
+                Perfil Público
+              </a>
+            </li>
+            <li>
+              <a href="#cuenta" class="block px-6 py-4 font-medium text-stone-600 hover:bg-stone-50 transition-colors">
+                Seguridad de Cuenta
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Settings Form -->
+      <div class="col-span-1 md:col-span-2">
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-stone-200">
+          <h2 class="font-title text-2xl text-stone-800 uppercase mb-6" id="perfil">Perfil Público</h2>
+          
+          {successMessage && (
+            <div class="bg-green-100 border border-green-200 text-green-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
+              {successMessage}
+            </div>
+          )}
+          {errorMessage && (
+            <div class="bg-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
+              {errorMessage}
+            </div>
+          )}
+
+          <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            <input type="hidden" name="action" value="update_profile" />
+            
+            <div class="flex items-center gap-6 mb-8">
+              <div id="avatar-container" class="w-24 h-24 bg-stone-200 rounded-full flex items-center justify-center font-bold text-3xl text-stone-400 select-none overflow-hidden border-4 border-white shadow-sm">
+                {currentUser!.avatar ? (
+                  <img id="avatar-img" src={`${import.meta.env.PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'}/api/files/${currentUser!.collectionId}/${currentUser!.id}/${currentUser!.avatar}`} alt="Avatar" class="w-full h-full object-cover" />
+                ) : (
+                  (currentUser!.name || currentUser!.username || 'U').split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()
+                )}
+              </div>
+              <div>
+                <label class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-2 px-4 rounded-lg text-sm transition-colors border border-stone-200 cursor-pointer inline-block relative overflow-hidden group">
+                  <span id="upload-text">Subir Imagen</span>
+                  <input type="file" id="avatar-upload" name="avatar" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                </label>
+                <p class="text-xs text-stone-400 mt-2">JPG, PNG o GIF (Max. 5MB)</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-stone-700 mb-2 uppercase tracking-wide">Nombre Completo</label>
+              <input type="text" name="name" value={currentUser!.name || ''} placeholder="Tu nombre" class="w-full bg-stone-50 border border-stone-200 text-stone-900 rounded-xl focus:ring-rose-500 focus:border-rose-500 block p-3 transition-colors" required />
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-stone-700 mb-2 uppercase tracking-wide">Correo Electrónico</label>
+              <input type="email" value={currentUser!.email} disabled class="w-full bg-stone-100 border border-stone-200 text-stone-500 rounded-xl cursor-not-allowed block p-3" />
+              <p class="text-xs text-stone-400 mt-2">Para cambiar tu correo, contacta a soporte.</p>
+            </div>
+
+            <div class="pt-4 border-t border-stone-100">
+              <button type="submit" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all uppercase tracking-wide text-sm">
+                Guardar Perfil
+              </button>
+            </div>
+          </form>
+        </div>
+        
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-stone-200 mt-8" id="cuenta">
+          <h2 class="font-title text-2xl text-stone-800 uppercase mb-6">Seguridad de Cuenta</h2>
+          
+          <form method="POST" class="space-y-6">
+            <input type="hidden" name="action" value="update_password" />
+            
+            <div>
+              <label class="block text-sm font-bold text-stone-700 mb-2 uppercase tracking-wide">Contraseña Actual</label>
+              <input type="password" name="oldPassword" class="w-full bg-stone-50 border border-stone-200 text-stone-900 rounded-xl focus:ring-rose-500 focus:border-rose-500 block p-3 transition-colors" required />
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-bold text-stone-700 mb-2 uppercase tracking-wide">Nueva Contraseña</label>
+                <input type="password" name="password" minlength="8" class="w-full bg-stone-50 border border-stone-200 text-stone-900 rounded-xl focus:ring-rose-500 focus:border-rose-500 block p-3 transition-colors" required />
+              </div>
+              <div>
+                <label class="block text-sm font-bold text-stone-700 mb-2 uppercase tracking-wide">Confirmar Contraseña</label>
+                <input type="password" name="passwordConfirm" minlength="8" class="w-full bg-stone-50 border border-stone-200 text-stone-900 rounded-xl focus:ring-rose-500 focus:border-rose-500 block p-3 transition-colors" required />
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-stone-100">
+              <button type="submit" class="bg-stone-900 hover:bg-black text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all uppercase tracking-wide text-sm">
+                Cambiar Contraseña
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <!-- Toast Popup -->
+  <div id="toast-notification" class="fixed bottom-6 right-6 bg-stone-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-full opacity-0 transition-all duration-300 z-50">
+    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-bold text-sm">✓</div>
+    <div>
+      <p class="font-bold text-sm">Imagen guardada</p>
+      <p class="text-xs text-stone-300">Tu avatar ha sido actualizado con éxito.</p>
+    </div>
+  </div>
+
+  <script>
+    import { pb } from '../lib/pocketbase';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.getElementById('avatar-upload') as HTMLInputElement;
+      const avatarContainer = document.getElementById('avatar-container');
+      const toast = document.getElementById('toast-notification');
+      const uploadText = document.getElementById('upload-text');
+      
+      fileInput?.addEventListener('change', async (e: Event) => {
+        const target = e.target as HTMLInputElement;
+        const file = target.files?.[0];
+        if (!file) return;
+        
+        if (uploadText) uploadText.textContent = "Subiendo...";
+        
+        pb.authStore.loadFromCookie(document.cookie);
+        if (!pb.authStore.isValid) return;
+        
+        const user = pb.authStore.record;
+        if (!user) return;
+        const collectionName = user.collectionName || 'users';
+        
+        const formData = new FormData();
+        formData.append('avatar', file);
+        
+        try {
+          const updatedRecord = await pb.collection(collectionName).update(user.id, formData);
+          
+          // Actualizar cookie
+          pb.authStore.save(pb.authStore.token, updatedRecord);
+          document.cookie = pb.authStore.exportToCookie({ httpOnly: false });
+          
+          // Actualizar imagen en UI
+          const url = `${import.meta.env.PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'}/api/files/${updatedRecord.collectionId}/${updatedRecord.id}/${updatedRecord.avatar}`;
+          
+          if (avatarContainer) {
+            avatarContainer.innerHTML = `<img id="avatar-img" src="${url}" alt="Avatar" class="w-full h-full object-cover" />`;
+          }
+          
+          // Mostrar toast
+          if (toast) {
+            toast.classList.remove('translate-y-full', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+              toast.classList.add('translate-y-full', 'opacity-0');
+              toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+          }
+          
+          if (uploadText) uploadText.textContent = "Subir Imagen";
+          
+        } catch(err) {
+          console.error("Error al subir avatar:", err);
+          alert('Hubo un error al subir la imagen. Verifica que sea menor a 5MB.');
+          if (uploadText) uploadText.textContent = "Subir Imagen";
+        }
+      });
+    });
+  </script>
+</UserLayout>

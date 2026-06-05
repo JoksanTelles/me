@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import AdminForm from '../../../components/admin/AdminForm.vue';
+import { BlogEditor } from '../../../components/admin/BlogEditor';
 import { pb } from '../../../lib/pocketbase';
 
 export const prerender = false;
@@ -12,5 +12,5 @@ if (id !== 'new') {
 }
 ---
 <AdminLayout title={id === 'new' ? 'Nuevo Artículo' : 'Editar Artículo'} activePath="/admin/blog">
-  <AdminForm collectionId="blog" recordId={id as string} baseRoute="/admin/blog" recordLookupField="id" client:only="vue" />
+  <BlogEditor recordId={id as string} client:load />
 </AdminLayout>

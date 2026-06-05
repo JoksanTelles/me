@@ -169,8 +169,10 @@ export function DataTable({ collectionId, baseRoute, editUrlParam = 'id' }: Data
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
                             <a href={getEditUrl(record)} className="cursor-pointer">
-                              <span className="material-symbols-outlined text-[16px] mr-2">edit</span>
-                              Editar
+                              <span className="material-symbols-outlined text-[16px] mr-2">
+                                {collectionId === 'purchases' ? 'receipt_long' : 'edit'}
+                              </span>
+                              {collectionId === 'purchases' ? 'Ver Ticket' : 'Editar'}
                             </a>
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => deleteRecord(record.id)} className="text-red-600 cursor-pointer focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-950">

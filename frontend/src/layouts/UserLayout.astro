@@ -1,0 +1,67 @@
+---
+import '../styles/global.css';
+import NavbarUserIcon from '../components/NavbarUserIcon.vue';
+
+interface Props {
+  title: string;
+  user?: any;
+}
+
+const { title, user } = Astro.props;
+
+let avatarUrl = '';
+if (user?.avatar) {
+  avatarUrl = `${import.meta.env.PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090'}/api/files/${user.collectionId}/${user.id}/${user.avatar}`;
+}
+---
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width" />
+  <title>{title} | Joksan</title>
+  <slot name="head" />
+</head>
+<body class="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased flex flex-col">
+  {user && (
+    <header class="bg-white border-b border-stone-200 py-4 px-4 sm:px-8 flex justify-between items-center relative z-20 shrink-0 shadow-sm">
+      <a href="/" class="font-title text-2xl text-rose-950 uppercase hover:text-rose-600 transition-colors">Joksan</a>
+      <div class="flex items-center gap-4 sm:gap-6">
+        <a href="/courses" class="text-xs sm:text-sm font-bold text-stone-600 hover:text-rose-600 uppercase tracking-wide hidden sm:block">Cursos</a>
+        <a href="/cart" class="text-stone-500 hover:text-rose-500 transition-colors">
+          <span class="material-symbols-outlined text-xl pt-1">shopping_cart</span>
+        </a>
+        <div class="relative group cursor-pointer hover:opacity-100 transition-opacity">
+          <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white z-10"></span>
+          <span class="material-symbols-outlined text-xl pt-1 text-stone-500 group-hover:text-rose-500 transition-colors">notifications</span>
+          <div class="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-stone-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden translate-y-1 group-hover:translate-y-0">
+            <div class="px-4 py-3 border-b border-stone-50 bg-stone-50/50 flex justify-between items-center">
+              <span class="text-sm font-bold text-stone-900">Notificaciones</span>
+            </div>
+            <div class="p-6 text-center">
+              <div class="text-3xl mb-2">📭</div>
+              <p class="text-sm text-stone-500 font-medium">No tienes notificaciones nuevas</p>
+            </div>
+            <a href="/notifications" class="block text-center p-3 text-rose-600 font-bold text-xs hover:bg-rose-50 transition-colors border-t border-stone-50 uppercase tracking-wide">
+              Ver todas
+            </a>
+          </div>
+        </div>
+        <NavbarUserIcon client:load userName={user.name || user.username || 'U'} userAvatar={avatarUrl} />
+      </div>
+    </header>
+  )}
+  
+  <div class="flex-1 flex flex-col">
+    <slot />
+  </div>
+
+  {user && (
+    <footer class="bg-white border-t border-stone-200 py-6 mt-auto">
+      <div class="max-w-5xl mx-auto px-4 text-center text-stone-400 text-sm">
+        &copy; {new Date().getFullYear()} Joksan. Todos los derechos reservados.
+      </div>
+    </footer>
+  )}
+</body>
+</html>

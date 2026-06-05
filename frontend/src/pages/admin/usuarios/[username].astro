@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import AdminForm from '../../../components/admin/AdminForm.vue';
+import { UserEditor } from '../../../components/admin/UserEditor';
 import { pb } from '../../../lib/pocketbase';
 
 export const prerender = false;
@@ -18,5 +18,5 @@ if (lookupUsername !== 'new') {
 }
 ---
 <AdminLayout title={lookupUsername === 'new' ? 'Nuevo Usuario' : `Editar Usuario ${lookupUsername}`} activePath="/admin/usuarios">
-  <AdminForm collectionId="users" recordId={lookupUsername as string} baseRoute="/admin/usuarios" recordLookupField="username" client:only="vue" />
+  <UserEditor username={lookupUsername as string} client:load />
 </AdminLayout>

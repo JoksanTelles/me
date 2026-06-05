@@ -1,6 +1,6 @@
 ---
 import AdminLayout from '../../../layouts/AdminLayout.astro';
-import AdminForm from '../../../components/admin/AdminForm.vue';
+import { TicketView } from '../../../components/admin/TicketView';
 import { pb } from '../../../lib/pocketbase';
 
 export const prerender = false;
@@ -11,6 +11,6 @@ if (id !== 'new') {
   catch(e) { return Astro.redirect('/admin/pedidos'); }
 }
 ---
-<AdminLayout title={id === 'new' ? 'Nuevo Pedido' : 'Editar Pedido'} activePath="/admin/pedidos">
-  <AdminForm collectionId="purchases" recordId={id as string} baseRoute="/admin/pedidos" recordLookupField="id" client:only="vue" />
+<AdminLayout title={id === 'new' ? 'Nuevo Pedido' : 'Ver Pedido'} activePath="/admin/pedidos">
+  <TicketView recordId={id as string} client:load />
 </AdminLayout>

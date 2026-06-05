@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+import { pb } from '../lib/pocketbase';
+import UserLayout from '../layouts/UserLayout.astro';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+
+if (!pb.authStore.isValid) {
+  return Astro.redirect('/login');
+}
+
+const user = pb.authStore.record;
+if (!user) {
+  return Astro.redirect('/login');
+}
+---
+
+<UserLayout title="Notificaciones" user={user}>
+  <main class="max-w-4xl mx-auto py-12 px-4 relative z-10 w-full flex-1">
+    <div class="mb-8">
+      <a href="/" class="text-stone-400 hover:text-rose-600 mb-4 inline-block font-medium text-sm">← Volver al inicio</a>
+      <h1 class="font-title text-4xl text-rose-950 uppercase">Notificaciones</h1>
+      <p class="text-stone-500 mt-2">Mantente al tanto de tus cursos y actividades.</p>
+    </div>
+    
+    <div class="bg-white rounded-3xl p-12 shadow-sm border border-stone-200 text-center flex flex-col items-center justify-center min-h-[40vh]">
+      <div class="text-6xl mb-4">📭</div>
+      <h2 class="font-title text-2xl text-stone-800 uppercase mb-2">Todo está al día</h2>
+      <p class="text-stone-500 max-w-md">No tienes notificaciones nuevas en este momento. Cuando haya actualizaciones sobre tus cursos o novedades, aparecerán aquí.</p>
+    </div>
+  </main>
+</UserLayout>

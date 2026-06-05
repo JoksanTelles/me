@@ -41,32 +41,36 @@ export const POST: APIRoute = async ({ request }) => {
   switch (event.type) {
     case 'payment_intent.succeeded':
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
-      const { user_id, course_id } = paymentIntent.metadata;
+      const { user_id, course_ids } = paymentIntent.metadata;
 
-      if (user_id && course_id) {
+      if (user_id && course_ids) {
         try {
-          // Check if purchase already exists
-          const existing = await pb.collection('purchases').getList(1, 1, {
-            filter: `stripe_payment_intent_id="${paymentIntent.id}"`
-          });
-
-          if (existing.totalItems === 0) {
-            const course = await pb.collection('courses').getOne(course_id);
-            let expires_at = "";
-            if (course.access_days > 0) {
-               const date = new Date();
-               date.setDate(date.getDate() + course.access_days);
-               expires_at = date.toISOString();
-            }
-
-            await pb.collection('purchases').create({
-              user_id: user_id,
-              course_id: course_id,
-              amount: paymentIntent.amount / 100, // back to normal currency
-              status: 'completed',
-              stripe_payment_intent_id: paymentIntent.id,
-              expires_at: expires_at
+          const ids = course_ids.split(',');
+          for (const cId of ids) {
+            // Check if purchase already exists
+            const existing = await pb.collection('purchases').getList(1, 1, {
+              filter: `stripe_payment_intent_id="${paymentIntent.id}" && course_id="${cId}"`
             });
+
+            if (existing.totalItems === 0) {
+              const course = await pb.collection('courses').getOne(cId);
+              let expires_at = "";
+              if (course.access_days > 0) {
+                 const date = new Date();
+                 date.setDate(date.getDate() + course.access_days);
+                 expires_at = date.toISOString();
+              }
+
+              await pb.collection('purchases').create({
+                user_id: user_id,
+                course_id: cId,
+                amount: (paymentIntent.amount / 100) / ids.length, // back to normal currency
+                status: 'completed',
+                stripe_payment_intent_id: paymentIntent.id,
+                stripe_session_id: paymentIntent.id + "_" + cId,
+                expires_at: expires_at
+              });
+            }
           }
         } catch(e) {
           console.error("Error creating purchase in DB:", e);

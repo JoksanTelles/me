@@ -1,0 +1,124 @@
+---
+import '../../../styles/global.css';
+import { pb } from '../../../lib/pocketbase';
+import { LearnViewer } from '../../../components/learn/LearnViewer';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+if (!pb.authStore.isValid) return Astro.redirect('/login');
+
+const { course_id, item_id } = Astro.params;
+if (!course_id || !item_id) return Astro.redirect('/dashboard');
+
+const user = pb.authStore.record;
+if (!user) return Astro.redirect('/login');
+
+// Validar compra
+let course = null;
+try {
+  course = await pb.collection('courses').getFirstListItem(`slug="${course_id}"`);
+  const purchase = await pb.collection('purchases').getFirstListItem(`user_id="${user.id}" && course_id="${course.id}"`);
+  
+  if (purchase.expires_at) {
+    const expires = new Date(purchase.expires_at);
+    if (expires < new Date()) {
+      // Si ya expiró, lo redirigimos al curso para que pueda ver por qué no tiene acceso.
+      return Astro.redirect(`/courses/${course_id}?error=expired`);
+    }
+  }
+} catch(e) {
+  return Astro.redirect(`/courses/${course_id}`);
+}
+
+// Authenticate as admin to fetch restricted content (quizzes, tasks) safely
+const pbAdmin = new (pb.constructor as any)(import.meta.env.PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090');
+try {
+  const authData = await pbAdmin.send('/api/admins/auth-with-password', {
+    method: 'POST',
+    body: { identity: 'admin@joksan.dev', password: '1234567890' }
+  });
+  pbAdmin.authStore.save(authData.token, authData.admin);
+} catch (e) {
+  console.error("Admin auth error:", e);
+}
+
+// Obtener todas las secciones
+const sections = await pbAdmin.collection('course_sections').getFullList({ filter: `course_id="${course.id}"`, sort: 'order' });
+
+let allLessons: any[] = [];
+let allQuizzes: any[] = [];
+let allTasks: any[] = [];
+
+if (sections.length > 0) {
+  const filterStr = sections.map((s: any) => `section_id="${s.id}"`).join(' || ');
+  allLessons = await pbAdmin.collection('lessons').getFullList({ filter: filterStr, sort: 'order' });
+  allQuizzes = await pbAdmin.collection('quizzes').getFullList({ filter: filterStr, sort: 'order' });
+  allTasks = await pbAdmin.collection('tasks').getFullList({ filter: filterStr, sort: 'order' });
+}
+
+// Map the items to their sections and sort them by order
+const sectionsWithItems = sections.map((sec: any) => {
+  const items = [
+    ...allLessons.filter(l => l.section_id === sec.id).map(l => ({ ...l, itemType: 'lesson' })),
+    ...allQuizzes.filter(q => q.section_id === sec.id).map(q => ({ ...q, itemType: 'quiz' })),
+    ...allTasks.filter(t => t.section_id === sec.id).map(t => ({ ...t, itemType: 'task' }))
+  ].sort((a, b) => a.order - b.order);
+  return { ...sec, items };
+});
+
+const projects = await pbAdmin.collection('projects').getFullList({ filter: `course_id="${course.id}"`, sort: 'order' });
+
+const userProgress = await pb.collection('user_progress').getFullList({ filter: `user_id="${user.id}"` });
+const completedItemIds = userProgress.map(p => p.lesson_id || p.quiz_id || p.task_id || p.project_id).filter(Boolean);
+
+let userTasks: any[] = [];
+let userProjects: any[] = [];
+try {
+  userTasks = await pb.collection('task_submissions').getFullList({ filter: `user_id="${user.id}"` });
+  userProjects = await pb.collection('project_submissions').getFullList({ filter: `user_id="${user.id}"` });
+} catch(e) {}
+
+// Find current item details
+let currentItem = null;
+let currentItemType = '';
+
+for (const sec of sectionsWithItems) {
+  const found = sec.items.find((i: any) => i.id === item_id);
+  if (found) {
+    currentItem = found;
+    currentItemType = found.itemType;
+    break;
+  }
+}
+
+if (!currentItem) {
+  const foundProject = projects.find((p: any) => p.id === item_id);
+  if (foundProject) {
+    currentItem = foundProject;
+    currentItemType = 'project';
+  }
+}
+
+if (!currentItem) return Astro.redirect(`/courses/${course.slug}`);
+---
+
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>{currentItem.title} | {course.title}</title>
+</head>
+<body class="h-screen bg-stone-50 font-sans text-stone-900 antialiased flex overflow-hidden">
+  <LearnViewer 
+    client:load 
+    course={course} 
+    sections={sectionsWithItems} 
+    projects={projects}
+    currentItem={currentItem} 
+    currentItemType={currentItemType}
+    completedItemIds={completedItemIds}
+    userProgress={userProgress}
+    userTasks={userTasks}
+    userProjects={userProjects}
+    userId={user.id}
+  />
+</body>
+</html>

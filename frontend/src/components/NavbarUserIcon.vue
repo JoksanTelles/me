@@ -1,8 +1,9 @@
 <template>
   <div class="relative" @click="isOpen = !isOpen" v-click-outside="() => isOpen = false">
     <!-- Icono de usuario -->
-    <div class="w-10 h-10 bg-stone-200 rounded-full flex items-center justify-center font-bold text-stone-600 cursor-pointer hover:ring-2 hover:ring-rose-200 transition-all select-none">
-      {{ initials }}
+    <div class="w-10 h-10 bg-stone-200 rounded-full flex items-center justify-center font-bold text-stone-600 cursor-pointer hover:ring-2 hover:ring-rose-200 transition-all select-none overflow-hidden border border-stone-200">
+      <img v-if="userAvatar" :src="userAvatar" alt="Avatar" class="w-full h-full object-cover" />
+      <span v-else>{{ initials }}</span>
     </div>
 
     <!-- Dropdown Menu -->
@@ -19,13 +20,13 @@
           <p class="text-sm font-medium text-stone-900 truncate">{{ userName }}</p>
         </div>
         <div class="py-1">
-          <a href="/dashboard" class="block px-4 py-2 text-sm text-stone-700 hover:bg-rose-50 hover:text-rose-600 transition-colors">
-            Mi Dashboard
+          <a href="/" class="block px-4 py-2 text-sm text-stone-700 hover:bg-rose-50 hover:text-rose-600 transition-colors">
+            Mis Cursos
           </a>
-          <a href="/dashboard" class="block px-4 py-2 text-sm text-stone-700 hover:bg-rose-50 hover:text-rose-600 transition-colors">
-            Mis Compras
+          <a href="/orders" class="block px-4 py-2 text-sm text-stone-700 hover:bg-rose-50 hover:text-rose-600 transition-colors">
+            Mis Pedidos
           </a>
-          <a href="#" class="block px-4 py-2 text-sm text-stone-400 hover:bg-stone-50 transition-colors cursor-not-allowed">
+          <a href="/settings" class="block px-4 py-2 text-sm text-stone-700 hover:bg-rose-50 hover:text-rose-600 transition-colors">
             Configuraciones
           </a>
         </div>
@@ -47,13 +48,17 @@ const props = defineProps({
   userName: {
     type: String,
     default: 'Usuario'
+  },
+  userAvatar: {
+    type: String,
+    default: null
   }
 });
 
 const isOpen = ref(false);
 
 const initials = computed(() => {
-  return props.userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  return (props.userName || 'Usuario').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 });
 
 const logout = () => {

@@ -1,0 +1,39 @@
+---
+import '../../styles/global.css';
+import { pb } from '../../lib/pocketbase';
+import UserLayout from '../../layouts/UserLayout.astro';
+import { TicketView } from '../../components/admin/TicketView';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+
+if (!pb.authStore.isValid) {
+  return Astro.redirect('/login');
+}
+
+const user = pb.authStore.record;
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect('/orders');
+}
+
+// Validar que el pedido pertenece al usuario
+try {
+  const purchase = await pb.collection('purchases').getOne(id);
+  if (purchase.user_id !== user.id) {
+    return Astro.redirect('/orders');
+  }
+} catch(e) {
+  return Astro.redirect('/orders');
+}
+---
+
+<UserLayout title="Ver Ticket de Compra" user={user}>
+  <div class="py-12 bg-stone-50 min-h-screen">
+    <TicketView recordId={id} backUrl="/orders" client:load />
+  </div>
+</UserLayout>

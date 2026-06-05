@@ -31,7 +31,7 @@ export function CoursesTable() {
         counts[p.course_id]++
       }
       setStudentCounts(counts)
-    } catch(e) {
+    } catch (e) {
       console.error(e)
     } finally {
       setLoading(false)
@@ -117,7 +117,9 @@ export function CoursesTable() {
                       )}
                     </TableCell>
                     <TableCell className="font-medium max-w-[250px] truncate">
-                      {course.title}
+                      <a href={`/admin/cursos/${course.slug}`} className="cursor-pointer">
+                        {course.title}
+                      </a>
                     </TableCell>
                     <TableCell>
                       <Badge variant={course.status === 'published' ? 'default' : course.status === 'draft' ? 'secondary' : 'destructive'} className="uppercase text-[10px]">
@@ -138,47 +140,13 @@ export function CoursesTable() {
                         {studentCounts[course.id] || 0}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Abrir menú</span>
-                            <span className="material-symbols-outlined text-[18px]">more_vert</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem asChild>
-                            <a href={`/cursos/${course.slug}`} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                              <span className="material-symbols-outlined text-[16px] mr-2">visibility</span>
-                              Ver Curso
-                            </a>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <a href={`/admin/cursos/${course.slug}`} className="cursor-pointer">
-                              <span className="material-symbols-outlined text-[16px] mr-2">edit</span>
-                              Editar
-                            </a>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <a href={`/admin/cursos/${course.slug}/estudiantes`} className="cursor-pointer">
-                              <span className="material-symbols-outlined text-[16px] mr-2">school</span>
-                              Estudiantes
-                            </a>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <a href={`/admin/cursos/${course.slug}/resenas`} className="cursor-pointer">
-                              <span className="material-symbols-outlined text-[16px] mr-2">star</span>
-                              Reseñas
-                            </a>
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem onClick={() => deleteRecord(course.id)} className="text-destructive focus:text-destructive cursor-pointer">
-                            <span className="material-symbols-outlined text-[16px] mr-2">delete</span>
-                            Eliminar
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    <TableCell className="text-right flex flex-row justify-end items-center">
+                      <a href={`/courses/${course.slug}`} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                        <span className="material-symbols-outlined text-[16px] mr-2">visibility</span>
+                      </a>
+                      <div onClick={() => deleteRecord(course.id)} className="text-destructive focus:text-destructive cursor-pointer">
+                        <span className="material-symbols-outlined text-[16px] mr-2">delete</span>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

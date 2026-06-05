@@ -3,6 +3,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { Separator } from "@/components/ui/separator"
 import { AppSidebar } from "./AppSidebar"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbLink } from "@/components/ui/breadcrumb"
+import { pb } from "@/lib/pocketbase"
 
 export function AdminLayout({ children, activePath, title }: { children: React.ReactNode, activePath: string, title: string }) {
   const segments = activePath.split('/').filter(Boolean);

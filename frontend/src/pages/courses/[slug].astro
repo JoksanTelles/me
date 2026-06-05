@@ -1,6 +1,10 @@
 ---
 import '../../styles/global.css';
 import { pb } from '../../lib/pocketbase';
+import UserLayout from '../../layouts/UserLayout.astro';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+const user = pb.authStore.isValid ? pb.authStore.record : null;
 
 const { slug } = Astro.params;
 
@@ -18,44 +22,95 @@ const course = {
   price: courseRecord.price,
   features: ['Acceso de por vida', 'Certificado de finalización', 'Ejercicios prácticos']
 };
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const action = formData.get('action');
+  
+  if (action === 'enroll_free' && !course.price) {
+    if (!user) return Astro.redirect('/login');
+    
+    // Enroll the user for free
+    try {
+      // Authenticate as admin to create purchase securely
+      const pbAdmin = new (pb.constructor as any)(import.meta.env.PUBLIC_POCKETBASE_URL || 'http://127.0.0.1:8090');
+      try {
+        const authData = await pbAdmin.send('/api/admins/auth-with-password', {
+          method: 'POST',
+          body: { identity: 'admin@joksan.dev', password: '1234567890' }
+        });
+        pbAdmin.authStore.save(authData.token, authData.admin);
+      } catch (e) {
+        console.error("Admin auth error:", e);
+      }
+
+      const existing = await pbAdmin.collection('purchases').getList(1, 1, { filter: `course_id="${course.id}" && user_id="${user.id}"` });
+      if (existing.totalItems === 0) {
+        let expires_at = "";
+        if (courseRecord.access_days > 0) {
+           const date = new Date();
+           date.setDate(date.getDate() + courseRecord.access_days);
+           expires_at = date.toISOString();
+        }
+        await pbAdmin.collection('purchases').create({
+          user_id: user.id,
+          course_id: course.id,
+          amount: 0,
+          status: 'completed',
+          stripe_payment_intent_id: 'free_' + Date.now(),
+          stripe_session_id: 'free_' + Date.now(),
+          expires_at: expires_at
+        });
+      }
+      return Astro.redirect('/success?free=true');
+    } catch(e) {
+      console.error(e);
+    }
+  }
+}
 ---
 
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <title>{course.title} | Joksan</title>
-</head>
-<body class="min-h-screen bg-stone-100 font-sans text-stone-900 antialiased flex flex-col items-center py-12 px-4">
-  <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-stone-100">
-    
-    <div>
-      <a href="/courses" class="text-stone-500 hover:text-rose-600 mb-6 inline-block font-medium text-sm">← Ver todos los cursos</a>
-      <div class="aspect-video bg-stone-200 rounded-2xl mb-6 flex items-center justify-center text-stone-400 text-sm">Video Promocional</div>
-    </div>
-
-    <div class="flex flex-col justify-center">
-      <h1 class="font-title text-4xl text-rose-950 uppercase mb-4">{course.title}</h1>
-      <p class="text-stone-600 mb-6 leading-relaxed">{course.description}</p>
+<UserLayout title={course.title} user={user}>
+  <div class="flex flex-col items-center py-12 px-4 w-full">
+    <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-stone-100">
       
-      <ul class="mb-8 space-y-2">
-        {course.features.map(feat => (
-          <li class="flex items-center gap-2 text-stone-700 text-sm">
-            <span class="text-rose-500">✓</span> {feat}
-          </li>
-        ))}
-      </ul>
-
-      <div class="flex items-center gap-6 mt-auto">
-        <span class="font-title text-4xl text-stone-900">${course.price}</span>
-        <form method="POST" action="/cart" class="flex-1">
-          <input type="hidden" name="course_id" value={course.id} />
-          <button type="submit" class="w-full text-center bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-6 rounded-xl shadow-md transition-all uppercase tracking-wide">
-            Agregar al Carrito
-          </button>
-        </form>
+      <div>
+        <a href="/courses" class="text-stone-500 hover:text-rose-600 mb-6 inline-block font-medium text-sm">← Ver todos los cursos</a>
+        <div class="aspect-video bg-stone-200 rounded-2xl mb-6 flex items-center justify-center text-stone-400 text-5xl">🎬</div>
       </div>
-    </div>
 
+      <div class="flex flex-col justify-center">
+        <h1 class="font-title text-4xl text-rose-950 uppercase mb-4">{course.title}</h1>
+        <p class="text-stone-600 mb-6 leading-relaxed">{course.description}</p>
+        
+        <ul class="mb-8 space-y-2">
+          {course.features.map(feat => (
+            <li class="flex items-center gap-2 text-stone-700 text-sm">
+              <span class="text-rose-500">✓</span> {feat}
+            </li>
+          ))}
+        </ul>
+
+        <div class="flex items-center gap-6 mt-auto">
+          <span class="font-title text-4xl text-stone-900">${course.price}</span>
+          <form method="POST" action={!course.price ? "" : "/cart"} class="flex-1">
+            <input type="hidden" name="course_id" value={course.id} />
+            {!course.price ? (
+              <>
+                <input type="hidden" name="action" value="enroll_free" />
+                <button type="submit" class="w-full text-center bg-stone-900 hover:bg-black text-white font-bold py-4 px-6 rounded-xl shadow-md transition-all uppercase tracking-wide">
+                  Inscribirse Gratis
+                </button>
+              </>
+            ) : (
+              <button type="submit" class="w-full text-center bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 px-6 rounded-xl shadow-md transition-all uppercase tracking-wide">
+                Agregar al Carrito
+              </button>
+            )}
+          </form>
+        </div>
+      </div>
+
+    </div>
   </div>
-</body>
-</html>
+</UserLayout>

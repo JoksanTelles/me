@@ -1,72 +1,120 @@
 ---
 import '../styles/global.css';
 import { pb } from '../lib/pocketbase';
+import UserLayout from '../layouts/UserLayout.astro';
 
 pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+const user = pb.authStore.isValid ? pb.authStore.record : null;
 
 // Manejar POST desde la página de detalles
 if (Astro.request.method === 'POST') {
   const formData = await Astro.request.formData();
-  const courseId = formData.get('course_id');
-  if (courseId) {
-    Astro.cookies.set('cart_course_id', courseId.toString(), { path: '/' });
-    return Astro.redirect('/cart');
+  const action = formData.get('action');
+  
+  // Agregar al carrito
+  if (!action || action === 'add') {
+    const courseId = formData.get('course_id');
+    if (courseId) {
+      let cart: string[] = [];
+      try {
+        const existingCart = Astro.cookies.get('cart_course_ids')?.value;
+        if (existingCart) cart = JSON.parse(existingCart);
+      } catch(e) {}
+      
+      if (!cart.includes(courseId.toString())) {
+        cart.push(courseId.toString());
+      }
+      Astro.cookies.set('cart_course_ids', JSON.stringify(cart), { path: '/' });
+      return Astro.redirect('/cart');
+    }
+  }
+
+  // Eliminar del carrito
+  if (action === 'remove') {
+    const courseId = formData.get('course_id');
+    if (courseId) {
+      let cart: string[] = [];
+      try {
+        const existingCart = Astro.cookies.get('cart_course_ids')?.value;
+        if (existingCart) cart = JSON.parse(existingCart);
+      } catch(e) {}
+      
+      cart = cart.filter((id: string) => id !== courseId.toString());
+      Astro.cookies.set('cart_course_ids', JSON.stringify(cart), { path: '/' });
+      return Astro.redirect('/cart');
+    }
   }
 }
 
 // Obtener del cookie
-const courseId = Astro.cookies.get('cart_course_id')?.value;
-let course = null;
+let cartIds: string[] = [];
+try {
+  const cartCookie = Astro.cookies.get('cart_course_ids')?.value;
+  if (cartCookie) cartIds = JSON.parse(cartCookie);
+} catch(e) {}
 
-if (courseId) {
+let courses: any[] = [];
+if (cartIds.length > 0) {
   try {
-    course = await pb.collection('courses').getOne(courseId);
+    const filterStr = cartIds.map((id: string) => `id="${id}"`).join(' || ');
+    courses = await pb.collection('courses').getFullList({ filter: filterStr });
   } catch (e) {
     console.error(e);
   }
 }
+
+const totalPrice = courses.reduce((sum: number, c: any) => sum + (c.price || 0), 0);
 ---
 
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <title>Tu Carrito | Joksan</title>
-</head>
-<body class="min-h-screen bg-stone-100 font-sans text-stone-900 antialiased flex flex-col items-center py-12 px-4">
-  <div class="max-w-2xl w-full">
-    <a href="/courses" class="text-stone-500 hover:text-rose-600 mb-8 inline-block font-medium">← Volver a Cursos</a>
-    <h1 class="font-title text-3xl text-rose-950 uppercase mb-8">Tu Carrito de Compras</h1>
-    
-    <div class="bg-white rounded-3xl p-8 shadow-md border border-stone-100">
-      {course ? (
-        <>
-          <div class="flex justify-between items-center border-b border-stone-100 pb-6 mb-6">
-            <div class="flex items-center gap-4">
-              <div class="w-16 h-16 bg-stone-200 rounded-lg"></div>
-              <div>
-                <h2 class="font-title text-xl text-rose-600 uppercase">{course.title}</h2>
-                <p class="text-stone-500 text-sm">Curso online</p>
-              </div>
+<UserLayout title="Tu Carrito" user={user}>
+  <div class="flex flex-col items-center py-12 px-4 w-full">
+    <div class="max-w-2xl w-full">
+      <a href="/courses" class="text-stone-500 hover:text-rose-600 mb-8 inline-block font-medium">← Volver a Cursos</a>
+      <h1 class="font-title text-3xl text-rose-950 uppercase mb-8">Tu Carrito de Compras</h1>
+      
+      <div class="bg-white rounded-3xl p-8 shadow-md border border-stone-100">
+        {courses.length > 0 ? (
+          <>
+            <div class="flex flex-col gap-6 border-b border-stone-100 pb-6 mb-6">
+              {courses.map((course: any) => (
+                <div class="flex justify-between items-center bg-stone-50 p-4 rounded-2xl">
+                  <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 bg-stone-200 rounded-lg flex items-center justify-center text-3xl">🎓</div>
+                    <div>
+                      <h2 class="font-title text-xl text-rose-600 uppercase">{course.title}</h2>
+                      <p class="text-stone-500 text-sm">Curso online</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-6">
+                    <span class="font-bold text-lg">${course.price}</span>
+                    <form method="POST">
+                      <input type="hidden" name="action" value="remove" />
+                      <input type="hidden" name="course_id" value={course.id} />
+                      <button type="submit" class="text-stone-400 hover:text-red-500 transition-colors" title="Quitar del carrito">
+                        <span class="material-symbols-outlined pt-1">delete</span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              ))}
             </div>
-            <span class="font-bold text-lg">${course.price}</span>
-          </div>
-          
-          <div class="flex justify-between items-center mb-8">
-            <span class="text-stone-600 font-medium">Total a pagar:</span>
-            <span class="font-title text-3xl text-stone-900">${course.price}</span>
-          </div>
+            
+            <div class="flex justify-between items-center mb-8 px-4">
+              <span class="text-stone-600 font-medium">Total a pagar ({courses.length} curso{courses.length > 1 ? 's' : ''}):</span>
+              <span class="font-title text-3xl text-stone-900">${totalPrice}</span>
+            </div>
 
-          <a href="/checkout" class="block w-full text-center bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide">
-            Proceder al Pago
-          </a>
-        </>
-      ) : (
-        <div class="text-center py-12">
-          <p class="text-stone-500 mb-6">Tu carrito está vacío.</p>
-          <a href="/courses" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-xl transition-all">Ver cursos</a>
-        </div>
-      )}
+            <a href="/checkout" class="block w-full text-center bg-rose-500 hover:bg-rose-600 text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide">
+              Proceder al Pago
+            </a>
+          </>
+        ) : (
+          <div class="text-center py-12">
+            <p class="text-stone-500 mb-6">Tu carrito está vacío.</p>
+            <a href="/courses" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-xl transition-all">Ver cursos</a>
+          </div>
+        )}
+      </div>
     </div>
   </div>
-</body>
-</html>
+</UserLayout>

@@ -1,30 +1,30 @@
 ---
 import '../styles/global.css';
+import { pb } from '../lib/pocketbase';
+import UserLayout from '../layouts/UserLayout.astro';
+
+pb.authStore.loadFromCookie(Astro.request.headers.get('cookie') || '');
+const user = pb.authStore.isValid ? pb.authStore.record : null;
+const courseId = Astro.url.searchParams.get('course') || '123';
 ---
 
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <title>¡Felicidades! | Joksan</title>
-</head>
-<body class="min-h-screen bg-rose-500 font-sans text-white antialiased flex flex-col items-center justify-center py-12 px-4 text-center">
-  
-  <div class="max-w-lg w-full flex flex-col items-center">
-    <div class="text-6xl mb-6">🎉</div>
-    <h1 class="font-title text-5xl uppercase mb-4 drop-shadow-md">¡Curso Completado!</h1>
-    <p class="text-rose-100 text-lg mb-10 leading-relaxed">
-      Has finalizado exitosamente todas las lecciones y evaluaciones de "Diseño Web Moderno". Tu certificado de finalización está listo.
-    </p>
+<UserLayout title="¡Felicidades!" user={user}>
+  <div class="flex-1 bg-rose-500 font-sans text-white flex flex-col items-center justify-center py-12 px-4 text-center">
+    <div class="max-w-lg w-full flex flex-col items-center">
+      <div class="text-6xl mb-6">🎉</div>
+      <h1 class="font-title text-5xl uppercase mb-4 drop-shadow-md">¡Curso Completado!</h1>
+      <p class="text-rose-100 text-lg mb-10 leading-relaxed">
+        Has finalizado exitosamente todas las lecciones y evaluaciones de tu curso. Tu certificado de finalización está listo.
+      </p>
 
-    <div class="flex flex-col gap-4 w-full">
-      <a href="/certificate/123" class="bg-white text-rose-600 hover:bg-stone-50 font-bold py-4 rounded-xl shadow-xl transition-all uppercase tracking-wide text-lg border-2 border-transparent">
-        Ver mi Certificado
-      </a>
-      <a href="/dashboard" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide border border-rose-400">
-        Volver al Dashboard
-      </a>
+      <div class="flex flex-col gap-4 w-full">
+        <a href={`/certificate/${courseId}`} class="bg-white text-rose-600 hover:bg-stone-50 font-bold py-4 rounded-xl shadow-xl transition-all uppercase tracking-wide text-lg border-2 border-transparent">
+          Ver mi Certificado
+        </a>
+        <a href="/" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-xl shadow-md transition-all uppercase tracking-wide border border-rose-400">
+          Volver al Inicio
+        </a>
+      </div>
     </div>
   </div>
-
-</body>
-</html>
+</UserLayout>
